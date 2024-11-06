@@ -9,4 +9,5 @@ export declare class BannerInteractor implements IBannerInteractor {
     viewWelcomeBanner(): Promise<any>;
     viewOfferBanner(): Promise<any>;
     viewCollectionBanner(): Promise<any>;
+    deleteBanner(imageUrl: string, name: string): Promise<any>;
 }

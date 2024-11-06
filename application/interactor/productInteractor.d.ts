@@ -20,11 +20,11 @@ export declare class ProductInteractor implements IProductInteractor {
     bulkDownload(): Promise<any>;
     updateImage(id: mongoose.Types.ObjectId, index: number, path: string): Promise<boolean | string>;
     getAllProducts(page: number, limit: number): Promise<ProductResponseDTO>;
-    getAllListedProducts(page: number, limit: number): Promise<ProductResponseDTO>;
+    getAllListedProducts(page: number, limit: number, userId?: string | null): Promise<ProductResponseDTO>;
     SearchByName(page: number, limit: number, productName: string): Promise<ProductResponseDTO>;
-    fetchByCategoryAndName(page: number, limit: number, filter: any): Promise<ProductResponseDTO>;
-    listProductsBySubcategories(page: number, limit: number, mainCatId: any): Promise<any>;
-    getProductById(id: mongoose.Types.ObjectId): Promise<ProductDTO | null>;
+    fetchByCategoryAndName(page: number, limit: number, filter: any, userId?: string | null): Promise<ProductResponseDTO>;
+    listProductsBySubcategories(page: number, limit: number, mainCatId: any, userId?: string | null): Promise<any>;
+    getProductById(id: mongoose.Types.ObjectId, userId?: string | null): Promise<ProductDTO | null>;
     updateProduct(id: mongoose.Types.ObjectId, data: Partial<ProductCreationDTO>): Promise<ProductDTO | null | responseHandler>;
     listById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
     unListById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;

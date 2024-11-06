@@ -16,6 +16,7 @@ const categoryRepository_1 = require("../../infrastructure/repositories/category
 const categoryModel_1 = __importDefault(require("../../infrastructure/model/categoryModel"));
 const subCategoryModel_1 = __importDefault(require("../../infrastructure/model/subCategoryModel"));
 const subCategoryRepository_1 = require("../../infrastructure/repositories/subCategoryRepository");
+const OptionalAuth_1 = require("../middleware/OptionalAuth");
 const productRepo = new productRepository_1.ProductRepository(producModel_1.ProductModel);
 const categoryRepo = new categoryRepository_1.CategoryRepository(categoryModel_1.default);
 const subCategoryRepo = new subCategoryRepository_1.SubCategoryRepository(subCategoryModel_1.default);
@@ -38,9 +39,9 @@ productRoutes.patch("/product/list-status/admin/:id", productController.toggleLi
 productRoutes.patch("/product/delete/admin/:id", productController.deleteProduct.bind(productController));
 productRoutes.put("/product/:id", productController.updateProduct.bind(productController));
 // User product routes
-productRoutes.get("/product/filter", productController.FilterProducts.bind(productController));
-productRoutes.get("/product/listed", productController.getAllListedProducts.bind(productController));
-productRoutes.get("/product/:id", productController.getProductById.bind(productController));
-productRoutes.get("/product/subCategory/:mainCatId", productController.listProductsBySubcategories.bind(productController));
+productRoutes.get("/product/filter", OptionalAuth_1.optionalAuth, productController.FilterProductsForUser.bind(productController));
+productRoutes.get("/product/listed", OptionalAuth_1.optionalAuth, productController.getAllListedProductsForUser.bind(productController));
+productRoutes.get("/product/:id", OptionalAuth_1.optionalAuth, productController.getProductByIdForUser.bind(productController));
+productRoutes.get("/product/subCategory/:mainCatId", OptionalAuth_1.optionalAuth, productController.listProductsBySubcategoriesForUser.bind(productController));
 exports.default = productRoutes;
 //# sourceMappingURL=productRoute.js.map

@@ -22,4 +22,8 @@ export declare class UserInteractor implements IUserInteractor {
     changeUserPassword(id: string, password: string, newPassword: string): Promise<userPasswordChangeDTO | null | undefined>;
     addUserAddress(id: string, address: any): Promise<any>;
     editUserAddress(id: string, newAddress: any): Promise<any>;
+    forgotPassword(email: string): Promise<any>;
+    verifyFogotOtp(email: string, userOtp: string): Promise<any>;
+    updateNewPassword(email: string, otp: string, newPassword: string): Promise<any>;
+    getUserAddress(id: string): Promise<any>;
 }

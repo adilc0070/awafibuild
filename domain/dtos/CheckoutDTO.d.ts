@@ -4,18 +4,30 @@ export interface ProductItemDTO {
     variant: string;
     quantity: number;
 }
+export interface ShippingAddressDTO {
+    fullName: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone: string;
+}
 export interface CheckoutDTO {
     userId: string;
-    stripe_id: string;
     amount: number;
     currency: string;
     paymentMethod: 'COD' | 'Razorpay' | 'Stripe';
     time: Date;
     products: ProductItemDTO[];
+    shippingAddress: ShippingAddressDTO;
+    transactionId: string;
+    paymentStatus: 'pending' | 'completed' | 'failed';
 }
 export interface CheckoutCreateDTO {
     user: mongoose.Types.ObjectId;
     amount: number;
+    currency: string;
     paymentMethod: 'COD' | 'Razorpay' | 'Stripe';
     orderPlacedAt: Date;
     deliveredAt: Date;
@@ -25,7 +37,9 @@ export interface CheckoutCreateDTO {
         variant: mongoose.Types.ObjectId;
         quantity: number;
     }[];
-    currency: string;
+    shippingAddress: ShippingAddressDTO;
+    transactionId: string;
+    paymentStatus: 'pending' | 'completed' | 'failed';
 }
 export interface OrderSummary {
     totalCount: number;

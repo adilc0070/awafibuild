@@ -20,5 +20,6 @@ const checkoutInteractor = new checkoutInteractor_1.CheckoutInteractor(cartRepo,
 const checkoutController = new checkoutController_1.CheckoutController(checkoutInteractor);
 const checkoutRoutes = express_1.default.Router();
 checkoutRoutes.post("/", checkoutController.checkout.bind(checkoutController));
+checkoutRoutes.get("/", checkoutController.getSecretKey.bind(checkoutController));
 exports.default = checkoutRoutes;
 //# sourceMappingURL=checkoutRoute.js.map

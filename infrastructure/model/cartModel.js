@@ -11,7 +11,7 @@ const userCartSchema = new mongoose_1.default.Schema({
     items: [
         {
             product: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: true },
-            variant: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Variant", required: true },
+            variant: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product.variants", required: true }, // Reference to the variant ID
             quantity: { type: Number, required: true, default: 1 }
         }
     ]

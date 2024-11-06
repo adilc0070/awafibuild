@@ -5,4 +5,5 @@ export interface IBannerInteractor {
     viewWelcomeBanner(): Promise<any>;
     viewOfferBanner(): Promise<any>;
     viewCollectionBanner(): Promise<any>;
+    deleteBanner(imageUrl: string, name: string): Promise<any>;
 }

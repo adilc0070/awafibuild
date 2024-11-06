@@ -11,4 +11,8 @@ export declare class UserController {
     changePassword(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
     addUserAddress(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
     updateUserAddress(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
+    forgotUserPassword(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
+    forgotOtpVerify(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
+    forgotNewpasswordSet(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;
+    getAddress(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;
 }

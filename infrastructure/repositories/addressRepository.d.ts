@@ -5,4 +5,17 @@ export declare class AddressRepo extends BaseRepository<IAddressDocument> implem
     constructor();
     addAddress(userId: string, address: any): Promise<any>;
     editAddress(id: string, newAddress: any): Promise<any>;
+    getAddress(userId: string): Promise<{
+        status: boolean;
+        message: string;
+        data?: undefined;
+    } | {
+        status: boolean;
+        data: import("mongoose").Document<unknown, {}, IAddressDocument> & IAddressDocument & Required<{
+            _id: unknown;
+        }> & {
+            __v: number;
+        };
+        message?: undefined;
+    }>;
 }

@@ -13,7 +13,7 @@ export declare class ProductRepository extends BaseRepository<IProductSchema> im
     addBulkProduct(productData: any): Promise<any>;
     findAllProducts(page: number, limit: number): Promise<ProductResponse>;
     findAllProductsInJsonWithAggregation(): Promise<ProductResponse>;
-    findListedAllProducts(page: number, limit: number): Promise<ProductResponse>;
+    findListedAllProducts(page: number, limit: number, userId?: string | null): Promise<ProductResponse>;
     findProductsBySpelling(page: number, limit: number, name: string): Promise<ProductResponse>;
     listProductsBySubcategories(page: number, limit: number, mainCatId: mongoose.Types.ObjectId): Promise<any>;
     fetchByCategoryAndName(page: number, limit: number, filter: any): Promise<ProductResponse>;

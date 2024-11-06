@@ -34,7 +34,9 @@ const envConfig = {
     EMAIL_PASS: process.env.EMAIL_PASS,
     PAYMENT_GATEWAY: process.env.PAYMENT_GATEWAY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    Atlas_Url: process.env.Atlas_Url
+    Atlas_Url: process.env.Atlas_Url,
+    Base_Url: process.env.Base_Url,
+    RAZORPAY_SECRET_KEY: process.env.RAZORPAY_SECRET_KEY
     // STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY as string
 };
 // Log loaded environment variables for debugging

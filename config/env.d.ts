@@ -6,6 +6,8 @@ interface EnvConfig {
     PAYMENT_GATEWAY: string;
     STRIPE_SECRET_KEY: string;
     Atlas_Url: string;
+    Base_Url: string;
+    RAZORPAY_SECRET_KEY: string;
 }
 declare const envConfig: EnvConfig;
 export default envConfig;

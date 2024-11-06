@@ -98,10 +98,10 @@ class ProductRepository extends baseRepository_1.BaseRepository {
             throw error;
         }
     }
-    async findListedAllProducts(page, limit) {
+    async findListedAllProducts(page, limit, userId) {
         const totalProducts = await this.model.countDocuments();
         const skip = (page - 1) * limit;
-        const products = await this.model.find({ isListed: true, isDelete: false }).skip(skip).limit(limit).populate('category').populate('subCategory').exec();
+        const products = await this.model.find({ isListed: true, isDelete: false }).skip(skip).limit(limit).populate('category').exec();
         return { products: products, totalPages: Math.ceil(totalProducts / limit) };
     }
     async findProductsBySpelling(page, limit, name) {

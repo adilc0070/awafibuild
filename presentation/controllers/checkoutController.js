@@ -15,8 +15,23 @@ class CheckoutController {
             }
             const data = req.body;
             data.userId = userId;
-            await this.checkoutInteractor.processCheckout(data);
-            res.status(200).json({ message: "Checkout successful!" });
+            const checkoutResponse = await this.checkoutInteractor.processCheckout(data);
+            res.status(200).json(checkoutResponse);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    async getSecretKey(req, res, next) {
+        try {
+            const PaymentMethod = req.query.paymentMethod;
+            const userId = req.user?.id;
+            if (!userId) {
+                res.status(401).json({ message: "Unauthorized" });
+                return;
+            }
+            const checkoutResponse = await this.checkoutInteractor.getSecretKey(PaymentMethod);
+            res.status(200).json(checkoutResponse);
         }
         catch (error) {
             next(error);

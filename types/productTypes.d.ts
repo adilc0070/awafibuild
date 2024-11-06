@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import IProductSchema from "../domain/entities/productSchema";
 import { ProductDTO } from '../domain/dtos/ProductDTO';
 export interface Description {
     header: string;
@@ -27,7 +26,7 @@ export default interface Product {
     updatedAt?: Date;
 }
 export type ProductResponse = {
-    products: IProductSchema[];
+    products: any[];
     totalPages: number;
 };
 export type ProductResponseDTO = {

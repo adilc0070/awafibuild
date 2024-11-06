@@ -6,6 +6,7 @@ export declare class BannerController {
     addOfferBanner(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
     allBanners(req: Request, res: Response, next: NextFunction): Promise<void>;
     unlistBanner(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;
+    deleteBanner(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;
     welcomeBanners(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;
     offerBanners(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;
     collectionBanners(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>>>;

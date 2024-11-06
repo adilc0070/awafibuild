@@ -31,6 +31,11 @@ userRoute.get('/profile', userAuthMiddleware_1.verifyToken, userController.userP
 userRoute.patch('/edit', userAuthMiddleware_1.verifyToken, userController.editProfile.bind(userController));
 userRoute.patch('/change-password', userAuthMiddleware_1.verifyToken, userController.changePassword.bind(userController));
 userRoute.post('/add-address', userAuthMiddleware_1.verifyToken, userController.addUserAddress.bind(userController));
+userRoute.get('/address', userAuthMiddleware_1.verifyToken, userController.addUserAddress.bind(userController));
 userRoute.post('/edit-address', userAuthMiddleware_1.verifyToken, userController.updateUserAddress.bind(userController));
+userRoute.post('/forgot-password', userController.forgotUserPassword.bind(userController));
+userRoute.post('/forgot-otpVeify', userController.forgotOtpVerify.bind(userController));
+userRoute.post('/forgot-setPassword', userController.forgotNewpasswordSet.bind(userController));
+userRoute.get('/user-address', userAuthMiddleware_1.verifyToken, userController.getAddress.bind(userController));
 exports.default = userRoute;
 //# sourceMappingURL=userRoute.js.map

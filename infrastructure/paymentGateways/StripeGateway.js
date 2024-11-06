@@ -16,26 +16,30 @@ class StripeGateway {
         });
     }
     async initiatePayment(amount, currency, stripeOptions, otherOptions) {
+        console.log("initiate payment is working ");
         try {
             const lineItems = otherOptions?.products.map((product) => ({
                 price_data: {
                     currency: currency || 'usd',
                     product_data: {
                         name: product.name,
-                        variant: product.variant,
-                        quantity: product.quantity
+                        // Remove the variant field as it's not supported
                     },
                     unit_amount: amount, // Amount per item; adjust this if each product has a different price
                 },
-                quantity: product.quantity,
+                quantity: product.quantity, // Keep quantity here
             }));
             const session = await this.stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items: lineItems,
                 mode: 'payment',
-                success_url: otherOptions?.successUrl || 'https://localhost:3000/success',
-                cancel_url: otherOptions?.cancelUrl || 'https://localhost:3000/cancel',
+                shipping_address_collection: {
+                    allowed_countries: ['IN', 'US', 'BR']
+                },
+                success_url: otherOptions?.successUrl || `${env_1.default.Base_Url}/success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: otherOptions?.cancelUrl || `${env_1.default.Base_Url}/cancel`,
             });
+            console.log("session data", session);
             return {
                 success: true,
                 data: session,

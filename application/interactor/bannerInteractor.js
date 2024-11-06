@@ -41,7 +41,7 @@ class BannerInteractor {
                 imageUrl: banner.imageUrl,
                 startDate: banner.startDate,
                 endDate: banner.endDate,
-                name: banner.name, // Include name in the response
+                name: banner.name,
             }));
             // Return only the filtered banner data
             return {
@@ -219,6 +219,36 @@ class BannerInteractor {
         }
         catch (error) {
             console.error("Error in viewWelcomeBanner:", error);
+        }
+    }
+    async deleteBanner(imageUrl, name) {
+        console.log(imageUrl, "image url", name, "name");
+        try {
+            // Update the banner model by removing the specified banner from the relevant arrays
+            const updatedBanner = await bannerModel_1.BannerModel.findOneAndUpdate({
+                $or: [
+                    { "offerBanners.imageUrl": imageUrl, "offerBanners.name": name },
+                    { "welcomeBanners.imageUrl": imageUrl, "welcomeBanners.name": name },
+                    { "collectionBanners.imageUrl": imageUrl, "collectionBanners.name": name },
+                ],
+            }, {
+                $pull: {
+                    offerBanners: { imageUrl: imageUrl, name: name },
+                    welcomeBanners: { imageUrl: imageUrl, name: name },
+                    collectionBanners: { imageUrl: imageUrl, name: name },
+                },
+            }, { new: true } // Return the updated document
+            );
+            if (!updatedBanner) {
+                console.log("No banner was found with the specified criteria");
+                return null;
+            }
+            console.log("Banner deleted successfully");
+            return updatedBanner;
+        }
+        catch (error) {
+            console.error("Error in deleteBanner:", error);
+            throw new Error(`Failed to delete banner: ${error.message}`);
         }
     }
 }

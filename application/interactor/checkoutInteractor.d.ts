@@ -10,5 +10,8 @@ export declare class CheckoutInteractor implements ICheckoutInteractor {
     private productRepo;
     private paymentGateway;
     constructor(cartRepo: ICartRepo, checkoutRepo: ICheckoutRepo, productRepo: IproductRepo, paymentGateway: IPaymentGateway);
-    processCheckout(data: CheckoutDTO): Promise<boolean>;
+    getSecretKey(paymentMethod: 'Razorpay' | 'Stripe'): Promise<{
+        secretKey: string;
+    }>;
+    processCheckout(data: CheckoutDTO): Promise<any>;
 }

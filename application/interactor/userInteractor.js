@@ -164,6 +164,83 @@ class UserInteractor {
             return { status: false, message: "An error occurred while adding the user address" };
         }
     }
+    async forgotPassword(email) {
+        try {
+            const userData = await this.userRepository.findUserEmail(email);
+            if (!userData) {
+                return { status: false, message: "User not found" };
+            }
+            if (userData.email === email) {
+                const otp = (0, otpService_1.generateOTP)();
+                const userData = { email, otp };
+                await redisServices_1.default.setData(email, userData, 300);
+                await this.emailService.OtpEmail(email, otp);
+                return { status: true, message: `OTP sent to the registered email. Please verify OTP.${otp}` };
+            }
+            else {
+                return { status: false, message: "Email mismatch" };
+            }
+        }
+        catch (error) {
+            console.error("Error in forgotPassword:", error);
+            return { status: false, message: "An error occurred while processing the request" };
+        }
+    }
+    async verifyFogotOtp(email, userOtp) {
+        try {
+            const userData = await redisServices_1.default.getData(email);
+            console.log(userData);
+            if (!userData) {
+                return { status: false, message: "User data not found or expired" };
+            }
+            if (userData.otp === userOtp) {
+                return { status: true, message: "otp verification success" };
+            }
+            else {
+                return { status: false, message: "Invalid Otp" };
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    async updateNewPassword(email, otp, newPassword) {
+        try {
+            const userData = await redisServices_1.default.getData(email);
+            if (!userData) {
+                return { status: false, message: "User data not found or expired" };
+            }
+            if (userData.otp === otp) {
+                const userDb = await this.userRepository.findUserEmail(email);
+                if (!userDb?._id) {
+                    return { status: false, message: "User data not found or expired" };
+                }
+                const hashedPassword = await this.bcrypt.encryptPassword(newPassword);
+                await this.userRepository.updatePassword(userDb.id, hashedPassword);
+                await redisServices_1.default.deleteData(email);
+                return { status: true, message: "change password succesfully" };
+            }
+            else {
+                return { status: false, message: "Invalid Otp" };
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    async getUserAddress(id) {
+        try {
+            const result = await this.addressRepo.getAddress(id);
+            if (!result.status) {
+                return { status: false, message: result.message };
+            }
+            return { status: true, message: "User address retrieved successfully", data: result.data };
+        }
+        catch (error) {
+            console.error("Error in getUserAddress:", error);
+            return { status: false, message: "An error occurred while retrieving the user address" };
+        }
+    }
 }
 exports.UserInteractor = UserInteractor;
 //# sourceMappingURL=userInteractor.js.map

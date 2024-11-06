@@ -52,6 +52,20 @@ class BannerController {
             return res.status(500).json({ message: "An error occurred while toggling banner status" });
         }
     }
+    async deleteBanner(req, res, next) {
+        try {
+            console.log("Reached controller", req.body.imageUrl, req.body.name);
+            const banners = await this.bannerInteractor.deleteBanner(req.body.imageUrl, req.body.name);
+            if (!banners) {
+                return res.status(404).json({ message: "Banner not found" });
+            }
+            return res.status(200).json({ message: "Banner listed status toggled successfully", banners });
+        }
+        catch (error) {
+            console.error('Error toggling banner status:', error);
+            return res.status(500).json({ message: "An error occurred while toggling banner status" });
+        }
+    }
     async welcomeBanners(req, res, next) {
         try {
             const banners = await this.bannerInteractor.viewWelcomeBanner();

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckoutInteractor = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const env_1 = __importDefault(require("../../config/env"));
 class CheckoutInteractor {
     cartRepo;
     checkoutRepo;
@@ -16,67 +17,40 @@ class CheckoutInteractor {
         this.productRepo = productRepo; // Initialize productRepo
         this.paymentGateway = paymentGateway; // Initialize payment gateway
     }
+    async getSecretKey(paymentMethod) {
+        console.log("payment method", paymentMethod);
+        if (paymentMethod === "Razorpay") {
+            return { secretKey: env_1.default.RAZORPAY_SECRET_KEY };
+        }
+        else if (paymentMethod === "Stripe") {
+            return { secretKey: env_1.default.STRIPE_SECRET_KEY };
+        }
+        return { secretKey: "no value" };
+    }
     async processCheckout(data) {
+        // Find the user's cart
         const cart = await this.cartRepo.findCartByUser(data.userId);
         if (!cart)
             throw new Error("Cart not found");
+        // Prepare the checkout data to be saved
         const checkoutData = {
             user: new mongoose_1.default.Types.ObjectId(data.userId),
             amount: data.amount,
             paymentMethod: data.paymentMethod,
             orderPlacedAt: new Date(data.time),
-            deliveredAt: new Date(new Date(data.time).getTime() + 7 * 24 * 60 * 60 * 1000),
+            deliveredAt: new Date(new Date(data.time).getTime() + 3 * 24 * 60 * 60 * 1000), // 3 days after order time
             cart: cart._id,
             items: cart.items,
-            currency: data.currency
-        }; // add any details if want - abhishek 
-        checkoutData.cart = cart._id;
-        // Set deliveredAt to 7 days after the provided time in data.time
-        checkoutData.deliveredAt = new Date(new Date(data.time).getTime() + 3 * 24 * 60 * 60 * 1000);
+            currency: data.currency,
+            shippingAddress: data.shippingAddress, // Add shipping address
+            transactionId: data.transactionId, // Add transaction ID
+            paymentStatus: data.paymentStatus // Set initial payment status
+        };
+        // Save the checkout data in the database
         const checkoutResult = await this.checkoutRepo.createCheckout(checkoutData);
-        let otherOptions = {};
-        // Check payment method
-        switch (data.paymentMethod) {
-            case 'COD':
-                // Handle Cash on Delivery
-                // checkoutResult.status = 'Pending'; // Set status for COD
-                break;
-            case 'Razorpay':
-                // For Razorpay payment
-                const razorpayOptions = { razorpay_id: 'asdfasd' }; // Add any specific options for Razorpay if needed
-                otherOptions = {};
-                const razorpayResponse = await this.paymentGateway.initiatePayment(checkoutResult.amount, checkoutResult.currency, razorpayOptions, otherOptions);
-                if (!razorpayResponse) {
-                    throw new Error('Razorpay payment initiation failed');
-                }
-                // checkoutResult.status = 'Paid'; // Update status to reflect payment success
-                break;
-            case 'Stripe':
-                // For Stripe payment
-                const stripeOptions = { stripe_id: data.stripe_id }; // Add any specific options for Stripe if needed
-                otherOptions = { products: data.products, order: checkoutResult };
-                const stripeResponse = await this.paymentGateway.initiatePayment(checkoutResult.amount, checkoutResult.currency, stripeOptions, otherOptions);
-                if (!stripeResponse) {
-                    throw new Error('Stripe payment initiation failed');
-                }
-                // checkoutResult.status = 'Paid'; // Update status to reflect payment success
-                break;
-            default:
-                throw new Error('Invalid payment method');
-        }
-        // Initiate payment
-        // const paymentResponse = await this.paymentGateway.initiatePayment(checkoutResult.amount, checkoutResult.currency);
-        // Store payment information in the checkout record if needed (not implemented here)
-        // Clear cart after successful checkout
-        // await this.cartRepo.clearCart(data.user.toString());
-        // Reduce product quantities
-        // for (const item of cart.items) {
-        //     const productId = new mongoose.Types.ObjectId(item.product);
-        //     await this.productRepo.updateVariantQuantity(productId.toString(), {
-        //         $inc: { "variants.$[variant].stockQuantity": -item.quantity } 
-        //     }, { arrayFilters: [{ "variant._id": item.product }] });
-        // }
-        return true; // Indicate success
+        // Clear the cart after successful checkout
+        await this.cartRepo.clearCart(data.userId);
+        return checkoutResult; // Return checkout result for frontend reference
     }
 }
 exports.CheckoutInteractor = CheckoutInteractor;

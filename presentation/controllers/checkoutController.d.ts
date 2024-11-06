@@ -4,4 +4,5 @@ export declare class CheckoutController {
     private checkoutInteractor;
     constructor(checkoutInteractor: ICheckoutInteractor);
     checkout(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getSecretKey(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

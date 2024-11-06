@@ -7,7 +7,6 @@ export declare class StripeGateway implements IPaymentGateway {
     }, otherOptions?: {
         products: {
             name: string;
-            variant: string;
             quantity: number;
         }[];
         successUrl?: string;

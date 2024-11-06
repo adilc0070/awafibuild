@@ -11,9 +11,12 @@ export declare class ProductController {
     getAllListedProducts(req: Request, res: Response, next: NextFunction): Promise<void>;
     SearchByName(req: Request, res: Response, next: NextFunction): Promise<void>;
     FilterProducts(req: Request, res: Response, next: NextFunction): Promise<void>;
-    listProductsBySubcategories(req: Request, res: Response, next: NextFunction): Promise<void>;
     getProductById(req: Request, res: Response, next: NextFunction): Promise<void>;
     updateProduct(req: Request, res: Response, next: NextFunction): Promise<void>;
     toggleListStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     deleteProduct(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllListedProductsForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getProductByIdForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+    listProductsBySubcategoriesForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+    FilterProductsForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

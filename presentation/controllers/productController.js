@@ -152,23 +152,6 @@ class ProductController {
             next(error);
         }
     }
-    // Fetching products under subcategory using main category id
-    async listProductsBySubcategories(req, res, next) {
-        try {
-            const { mainCatId } = req.params;
-            const page = req.query.page ? Number(req.query.page) : 1;
-            const limit = req.query.limit ? Number(req.query.limit) : 10;
-            if (!mainCatId) {
-                res.status(400).json({ error: "Main category ID is required" });
-            }
-            const MainCategoryId = new mongoose_1.default.Types.ObjectId(mainCatId);
-            const products = await this.productInteractor.listProductsBySubcategories(page, limit, MainCategoryId);
-            res.status(200).json(products);
-        }
-        catch (error) {
-            next(error);
-        }
-    }
     // Get a product by ID (HTTP GET)
     async getProductById(req, res, next) {
         try {
@@ -240,6 +223,79 @@ class ProductController {
             else {
                 res.status(404).json({ message: "Product not found" });
             }
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // --------------------------------------------// User product controllers------------------------------------------------
+    async getAllListedProductsForUser(req, res, next) {
+        try {
+            const userId = req.user?.id || null;
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const limit = req.query.limit ? Number(req.query.limit) : 10;
+            const products = await this.productInteractor.getAllListedProducts(page, limit, userId);
+            res.status(200).json(products);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // Get a product by ID (HTTP GET)
+    async getProductByIdForUser(req, res, next) {
+        try {
+            const userId = req.user?.id || null;
+            const productId = new mongoose_1.default.Types.ObjectId(req.params.id);
+            const product = await this.productInteractor.getProductById(productId, userId);
+            if (product) {
+                res.status(200).json(product);
+            }
+            else {
+                res.status(404).json({ message: "Product not found" });
+            }
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    // Fetching products under subcategory using main category id
+    async listProductsBySubcategoriesForUser(req, res, next) {
+        try {
+            const userId = req.user?.id || null;
+            const { mainCatId } = req.params;
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const limit = req.query.limit ? Number(req.query.limit) : 10;
+            if (!mainCatId) {
+                res.status(400).json({ error: "Main category ID is required" });
+            }
+            const MainCategoryId = new mongoose_1.default.Types.ObjectId(mainCatId);
+            const products = await this.productInteractor.listProductsBySubcategories(page, limit, MainCategoryId, userId);
+            res.status(200).json(products);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    async FilterProductsForUser(req, res, next) {
+        try {
+            const userId = req.user?.id || null;
+            const { mainCategoryId, subCategoryId, name } = req.body;
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const limit = req.query.limit ? Number(req.query.limit) : 10;
+            const MainCategoryId = mainCategoryId
+                ? new mongoose_1.default.Types.ObjectId(mainCategoryId)
+                : null;
+            const SubCategoryId = subCategoryId
+                ? new mongoose_1.default.Types.ObjectId(subCategoryId)
+                : null;
+            const prodctname = name ? name : null;
+            const filter = {
+                MainCategoryId,
+                SubCategoryId,
+                prodctname
+            };
+            const products = await this.productInteractor.fetchByCategoryAndName(page, limit, filter, userId);
+            res.status(200).json(products);
         }
         catch (error) {
             next(error);

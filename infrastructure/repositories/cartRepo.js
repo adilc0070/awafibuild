@@ -19,9 +19,11 @@ class CartRepository extends baseRepository_1.BaseRepository {
             throw new Error("Could not create cart. Please try again later.");
         }
     }
+    // Repository method
     async findCartByUser(userId) {
         try {
-            return await this.model.findOne({ user: userId })
+            return await this.model
+                .findOne({ user: userId })
                 .exec();
         }
         catch (error) {
