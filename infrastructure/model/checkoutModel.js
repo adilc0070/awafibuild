@@ -8,11 +8,18 @@ const mongoose_1 = __importDefault(require("mongoose"));
 // Checkout schema
 const checkoutSchema = new mongoose_1.default.Schema({
     user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true },
-    cart: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Cart", required: true },
+    cart: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Cart", required: false },
     items: [{
-            product: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: true },
-            variant: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Variant", required: true },
-            quantity: { type: Number, required: true }
+            product: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: false },
+            variant: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Variant", required: false },
+            quantity: { type: Number, required: false },
+            name: { type: String, required: true },
+            weight: { type: String, required: true },
+            inPrice: { type: Number, required: true },
+            outPrice: { type: Number, required: true },
+            images: { type: String, required: true },
+            stockQuantity: { type: Number, required: true },
+            rating: { type: Number, default: 0 }
         }],
     paymentMethod: { type: String, enum: ['COD', 'Razorpay', 'Stripe'], required: true },
     transactionId: { type: String, required: true },

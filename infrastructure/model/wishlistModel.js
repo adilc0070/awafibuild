@@ -27,11 +27,11 @@ exports.WishlistModel = void 0;
 // src/infrastructure/model/wishlistModel.ts
 const mongoose_1 = __importStar(require("mongoose"));
 const wishlistSchema = new mongoose_1.Schema({
-    user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
     items: [
         {
             productId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: true },
-            variantId: { type: mongoose_1.default.Schema.Types.ObjectId, required: false }
+            variantId: { type: mongoose_1.default.Schema.Types.ObjectId, required: false, ref: "Product.variants" }
         }
     ]
 }, {

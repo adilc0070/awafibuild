@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductRepository = void 0;
+const mongoose_1 = require("mongoose");
 const baseRepository_1 = require("./baseRepository");
 const producModel_1 = require("../../infrastructure/model/producModel");
+const ObjectId = mongoose_1.Types.ObjectId;
 class ProductRepository extends baseRepository_1.BaseRepository {
     constructor(model) {
         super(model);
@@ -30,13 +32,15 @@ class ProductRepository extends baseRepository_1.BaseRepository {
             subCategory: productData.subCategory,
             category: productData.mainCategory,
             descriptions: productData.Descriptions,
-            images: productData.images.toString().split(','),
-            variants: [{
+            images: productData.images.toString().split(","),
+            variants: [
+                {
                     weight: productData.variantWeight,
                     inPrice: productData.variantInPrice,
                     outPrice: productData.variantOutPrice,
-                    stockQuantity: productData.variantStockQuantity
-                }],
+                    stockQuantity: productData.variantStockQuantity,
+                },
+            ],
             createdAt: new Date(),
             updatedAt: new Date(),
         };
@@ -45,7 +49,12 @@ class ProductRepository extends baseRepository_1.BaseRepository {
     async findAllProducts(page, limit) {
         const totalProducts = await this.model.countDocuments();
         const skip = (page - 1) * limit;
-        const products = await this.model.find().skip(skip).limit(limit).populate('category').exec();
+        const products = await this.model
+            .find()
+            .skip(skip)
+            .limit(limit)
+            .populate("category")
+            .exec();
         return { products: products, totalPages: Math.ceil(totalProducts / limit) };
     }
     async findAllProductsInJsonWithAggregation() {
@@ -54,22 +63,32 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                 { $match: {} },
                 {
                     $lookup: {
-                        from: 'MainCategory',
-                        localField: 'category',
-                        foreignField: '_id',
-                        as: 'categoryDetails'
-                    }
+                        from: "MainCategory",
+                        localField: "category",
+                        foreignField: "_id",
+                        as: "categoryDetails",
+                    },
                 },
                 {
                     $lookup: {
-                        from: 'SubCategory',
-                        localField: 'subCategory',
-                        foreignField: '_id',
-                        as: 'subCategoryDetails'
-                    }
+                        from: "SubCategory",
+                        localField: "subCategory",
+                        foreignField: "_id",
+                        as: "subCategoryDetails",
+                    },
                 },
-                { $unwind: { path: '$categoryDetails', preserveNullAndEmptyArrays: true } },
-                { $unwind: { path: '$subCategoryDetails', preserveNullAndEmptyArrays: true } },
+                {
+                    $unwind: {
+                        path: "$categoryDetails",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$subCategoryDetails",
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
                 {
                     $project: {
                         _id: 1,
@@ -82,142 +101,113 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                         isListed: 1,
                         createdAt: 1,
                         updatedAt: 1,
-                        category: '$categoryDetails.name',
-                        subCategory: '$subCategoryDetails.name'
-                    }
-                }
+                        category: "$categoryDetails.name",
+                        subCategory: "$subCategoryDetails.name",
+                    },
+                },
             ]);
             const totalProducts = await this.model.countDocuments();
             return {
                 products: JSON.parse(JSON.stringify(products)),
-                totalPages: 0
+                totalPages: 0,
             };
         }
         catch (error) {
-            console.error('Error in findAllProductsInJsonWithAggregation:', error);
+            console.error("Error in findAllProductsInJsonWithAggregation:", error);
             throw error;
         }
     }
+<<<<<<< HEAD
+=======
     async findListedAllProducts(page, limit, userId) {
         const totalProducts = await this.model.countDocuments();
         const skip = (page - 1) * limit;
         const products = await this.model.find({ isListed: true, isDelete: false }).skip(skip).limit(limit).populate('category').exec();
         return { products: products, totalPages: Math.ceil(totalProducts / limit) };
     }
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
     async findProductsBySpelling(page, limit, name) {
         const totalProducts = await this.model.countDocuments({
             isListed: true,
             isDelete: false,
-            name: { $regex: name, $options: 'i' } // Case-insensitive search
+            name: { $regex: name, $options: "i" }, // Case-insensitive search
         });
         const skip = (page - 1) * limit;
         // Use aggregate pipeline to prioritize prefix matches first
-        const products = await this.model.aggregate([
+        const products = await this.model
+            .aggregate([
             {
                 $match: {
                     isListed: true,
                     isDelete: false,
-                    name: { $regex: name, $options: 'i' } // Case-insensitive search
-                }
+                    name: { $regex: name, $options: "i" }, // Case-insensitive search
+                },
             },
             {
                 $addFields: {
-                    prefixMatch: { $regexMatch: { input: "$name", regex: new RegExp(`^${name}`, 'i') } } // Prioritize prefix match
-                }
+                    prefixMatch: {
+                        $regexMatch: {
+                            input: "$name",
+                            regex: new RegExp(`^${name}`, "i"),
+                        },
+                    }, // Prioritize prefix match
+                },
             },
             {
-                $sort: { prefixMatch: -1, name: 1 } // Sort by prefix match (true/false) and then alphabetically by name
+                $sort: { prefixMatch: -1, name: 1 }, // Sort by prefix match (true/false) and then alphabetically by name
             },
             { $skip: skip },
             { $limit: limit },
             {
                 $lookup: {
-                    from: 'MainCategory',
-                    localField: 'category',
-                    foreignField: '_id',
-                    as: 'category'
-                }
-            }
-        ]).exec();
-        return { products: products, totalPages: Math.ceil(totalProducts / limit) };
-    }
-    async listProductsBySubcategories(page, limit, mainCatId) {
-        try {
-            const skip = (page - 1) * limit;
-            const groupedProducts = await producModel_1.ProductModel.aggregate([
-                {
-                    $match: {
-                        category: mainCatId,
-                        isListed: true
-                    }
+                    from: "MainCategory",
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "category",
                 },
-                {
-                    $group: {
-                        _id: "$subCategory",
-                        products: { $push: "$$ROOT" } // Push all fields for each product in this subcategory
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "subcategories", // Replace with your subcategory collection name
-                        localField: "_id",
-                        foreignField: "_id",
-                        as: "subCategoryDetails"
-                    }
-                },
-                {
-                    $unwind: "$subCategoryDetails" // Unwind to make subcategory details an object, not an array
-                },
-                {
-                    $project: {
-                        subCategory: "$subCategoryDetails.name",
-                        products: { $slice: ["$products", limit] } // Limit number of products per subcategory
-                    }
-                },
-                { $skip: skip }, // Skip to the required page
-                { $limit: limit } // Limit results per page
-            ]);
-            return groupedProducts;
-        }
-        catch (error) {
-            console.error("Error listing products by subcategories:", error);
-            throw error;
-        }
-    }
-    ;
-    async fetchByCategoryAndName(page, limit, filter) {
-        const queryFilter = { isListed: true };
-        if (filter.prodctname) {
-            queryFilter.name = { $regex: filter.prodctname, $options: 'i' };
-        }
-        if (filter.MainCategoryId) {
-            queryFilter.category = filter.MainCategoryId;
-        }
-        if (filter.SubCategoryId) {
-            queryFilter.subCategory = filter.SubCategoryId;
-        }
-        const skip = (page - 1) * limit;
-        const totalProducts = await this.model.countDocuments(queryFilter);
-        // Fetch products with the filter, or all products if no IDs are provided
-        const products = await this.model.find(queryFilter).skip(skip).limit(limit).populate('category').populate('subCategory').exec();
+            },
+        ])
+            .exec();
         return { products: products, totalPages: Math.ceil(totalProducts / limit) };
     }
     async findByName(name) {
         return await this.model.findOne({ name: name });
     }
+    async findByIdAndVariantId(productId, variantId) {
+        const products = await this.model.aggregate([
+            {
+                $match: {
+                    _id: productId
+                }
+            },
+            {
+                $addFields: {
+                    variants: {
+                        $filter: {
+                            input: "$variants",
+                            as: "variant",
+                            cond: { $eq: ["$$variant._id", variantId] }
+                        }
+                    }
+                }
+            }
+        ]);
+        // Return the first item in the array or an empty array if no products were found
+        return products[0] || null;
+    }
     async findByNameAndVariant(query) {
-        const products = await super.find({ name: query.name, variants: { weight: query.weight } });
+        const products = await super.find({
+            name: query.name,
+            variants: { weight: query.weight },
+        });
         return products.length > 0 ? true : false;
     }
     async findByNameAndNotCurrentId(id, name) {
-        const regex = new RegExp(`^${name}$`, 'i');
+        const regex = new RegExp(`^${name}$`, "i");
         return await super.findOne({
             _id: { $ne: id },
-            name: { $regex: regex }
+            name: { $regex: regex },
         });
-    }
-    async productFindById(id) {
-        return await this.model.findById(id).populate('category').populate('subCategory').exec();
     }
     async isListedProduct(id) {
         return await this.model.findOne({ _id: id, isListed: true }).exec();
@@ -229,10 +219,12 @@ class ProductRepository extends baseRepository_1.BaseRepository {
         return await this.model.updateOne({ _id: id }, { $set: { [`images.${index}`]: photo } });
     }
     async updateVariantQuantity(productId, variantId, quantity) {
-        return await this.model.findOneAndUpdate({ _id: productId, 'variants._id': variantId }, // Find the product and the specific variant
-        { $inc: { 'variants.$.stockQuantity': quantity } }, // Increment or decrement the stock quantity
+        return await this.model
+            .findOneAndUpdate({ _id: productId, "variants._id": variantId }, // Find the product and the specific variant
+        { $inc: { "variants.$.stockQuantity": quantity } }, // Increment or decrement the stock quantity
         { new: true } // Return the updated product
-        ).exec();
+        )
+            .exec();
     }
     // Update in productRepository.ts
     async updateProduct(id, data) {
@@ -240,7 +232,10 @@ class ProductRepository extends baseRepository_1.BaseRepository {
         if (!product) {
             throw new Error("Product not found");
         }
-        if ('weight' in data && 'inPrice' in data && 'outPrice' in data && 'stockQuantity' in data) {
+        if ("weight" in data &&
+            "inPrice" in data &&
+            "outPrice" in data &&
+            "stockQuantity" in data) {
             const variantData = data;
             const variant = product.variants.find((v) => v.weight === variantData.weight);
             if (variant) {
@@ -261,6 +256,512 @@ class ProductRepository extends baseRepository_1.BaseRepository {
     async deleteProduct(id) {
         const result = await this.model.findByIdAndDelete(id).exec();
         return !!result;
+    }
+    //------------------------------------------------------------ Both admin and user using repo---------------------------------------------
+    async findListedAllProducts(page, limit, userId) {
+        const skip = (page - 1) * limit;
+        const filterCriteria = { isListed: true, isDelete: false };
+        const totalProducts = await this.model.countDocuments(filterCriteria);
+        const products = await this.model.aggregate([
+            { $match: filterCriteria },
+            {
+                $lookup: {
+                    from: "carts",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.product", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "cartItems",
+                },
+            },
+            {
+                $lookup: {
+                    from: "wishlists",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.productId", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "wishlistItems",
+                },
+            },
+            {
+                $addFields: {
+                    inCart: {
+                        $cond: {
+                            if: { $gt: [userId, null] }, // Check if userId is not null
+                            then: { $gt: [{ $size: "$cartItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                    inWishlist: {
+                        $cond: {
+                            if: { $gt: [userId, null] }, // Check if userId is not null
+                            then: { $gt: [{ $size: "$wishlistItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                },
+            },
+            { $project: { cartItems: 0, wishlistItems: 0 } },
+            { $skip: skip },
+            { $limit: limit },
+        ]);
+        return {
+            products,
+            totalPages: Math.ceil(totalProducts / limit),
+        };
+    }
+    async fetchByCategoryAndName(page, limit, filter, userId) {
+        const queryFilter = { isListed: true };
+        if (filter.prodctname) {
+            queryFilter.name = { $regex: filter.prodctname, $options: "i" };
+        }
+        if (filter.MainCategoryId) {
+            queryFilter.category = filter.MainCategoryId;
+        }
+        if (filter.SubCategoryId) {
+            queryFilter.subCategory = filter.SubCategoryId;
+        }
+        const skip = (page - 1) * limit;
+        const totalProducts = await this.model.countDocuments(queryFilter);
+        const products = await this.model.aggregate([
+            { $match: queryFilter },
+            {
+                $lookup: {
+                    from: "carts",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.product", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "cartItems",
+                },
+            },
+            {
+                $lookup: {
+                    from: "wishlists",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.productId", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "wishlistItems",
+                },
+            },
+            {
+                $addFields: {
+                    inCart: {
+                        $cond: {
+                            if: { $gt: [userId, null] },
+                            then: { $gt: [{ $size: "$cartItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                    inWishlist: {
+                        $cond: {
+                            if: { $gt: [userId, null] },
+                            then: { $gt: [{ $size: "$wishlistItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                },
+            },
+            { $project: { cartItems: 0, wishlistItems: 0 } },
+            { $skip: skip },
+            { $limit: limit },
+        ]);
+        return {
+            products: products,
+            totalPages: Math.ceil(totalProducts / limit),
+        };
+    }
+    async productFindById(id, userId) {
+        const product = await this.model.aggregate([
+            { $match: { _id: id } },
+            {
+                $lookup: {
+                    from: "carts",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.product", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "cartItems",
+                },
+            },
+            {
+                $lookup: {
+                    from: "wishlists",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.productId", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "wishlistItems",
+                },
+            },
+            {
+                $addFields: {
+                    inCart: {
+                        $cond: {
+                            if: { $gt: [userId, null] },
+                            then: { $gt: [{ $size: "$cartItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                    inWishlist: {
+                        $cond: {
+                            if: { $gt: [userId, null] },
+                            then: { $gt: [{ $size: "$wishlistItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'maincategories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'MainCategoryData'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'subcategories',
+                    localField: 'subCategory',
+                    foreignField: '_id',
+                    as: 'SubCategoryData'
+                }
+            },
+            {
+                $project: { category: 0, subCategory: 0, cartItems: 0, wishlistItems: 0 }
+            }
+        ]);
+        return product[0] || null;
+    }
+    async listProductsBySubcategories(page, limit, subCategoryId, userId) {
+        const skip = (page - 1) * limit;
+        const products = await this.model.aggregate([
+            {
+                $match: { subCategory: subCategoryId },
+            },
+            {
+                $lookup: {
+                    from: "carts",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.product", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "cartItems",
+                },
+            },
+            {
+                $lookup: {
+                    from: "wishlists",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$user", userId] },
+                                        {
+                                            $anyElementTrue: {
+                                                $map: {
+                                                    input: "$items",
+                                                    as: "item",
+                                                    in: { $eq: ["$$item.product", "$$productId"] },
+                                                },
+                                            },
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "wishlistItems",
+                },
+            },
+            {
+                $addFields: {
+                    inCart: {
+                        $cond: {
+                            if: { $gt: [userId, null] },
+                            then: { $gt: [{ $size: "$cartItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                    inWishlist: {
+                        $cond: {
+                            if: { $gt: [userId, null] },
+                            then: { $gt: [{ $size: "$wishlistItems" }, 0] },
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'maincategories',
+                    localField: 'category',
+                    foreignField: '_id',
+                    as: 'MainCategoryData'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'subcategories',
+                    localField: 'subCategory',
+                    foreignField: '_id',
+                    as: 'SubCategoryData'
+                }
+            },
+            {
+                $project: {
+                    category: 0,
+                    subCategory: 0,
+                    cartItems: 0,
+                    wishlistItems: 0
+                }
+            },
+            { $skip: skip },
+            { $limit: limit },
+        ]);
+        return products;
+    }
+    async listProductsBySubcategoriesUsingMainCategory(page, limit, mainCatId, userId) {
+        try {
+            const skip = (page - 1) * limit;
+            const groupedProducts = await producModel_1.ProductModel.aggregate([
+                {
+                    $match: {
+                        category: mainCatId,
+                        isListed: true,
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "carts",
+                        let: { productId: "$_id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$user", userId] },
+                                            {
+                                                $anyElementTrue: {
+                                                    $map: {
+                                                        input: "$items",
+                                                        as: "item",
+                                                        in: { $eq: ["$$item.product", "$$productId"] },
+                                                    },
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                        as: "cartItems",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "wishlists",
+                        let: { productId: "$_id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$user", userId] },
+                                            {
+                                                $anyElementTrue: {
+                                                    $map: {
+                                                        input: "$items",
+                                                        as: "item",
+                                                        in: { $eq: ["$$item.productId", "$$productId"] },
+                                                    },
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                        as: "wishlistItems",
+                    },
+                },
+                {
+                    $addFields: {
+                        inCart: {
+                            $cond: {
+                                if: { $ne: [userId, null] },
+                                then: { $gt: [{ $size: "$cartItems" }, 0] },
+                                else: false,
+                            },
+                        },
+                        inWishlist: {
+                            $cond: {
+                                if: { $ne: [userId, null] },
+                                then: { $gt: [{ $size: "$wishlistItems" }, 0] },
+                                else: false,
+                            },
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: "$subCategory",
+                        products: { $push: "$$ROOT" }, // Push all fields for each product in this subcategory
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "subcategories", // Replace with your subcategory collection name
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "subCategoryDetails",
+                    },
+                },
+                {
+                    $unwind: {
+                        path: "$subCategoryDetails", // Unwind to make subcategory details an object, not an array
+                        preserveNullAndEmptyArrays: true, // Keep products with no matching subcategory
+                    },
+                },
+                {
+                    $project: {
+                        subCategory: "$subCategoryDetails.name",
+                        products: { $slice: ["$products", skip, limit] }, // Apply limit after skipping
+                    },
+                },
+                { $skip: skip }, // Skip to the required page
+                { $limit: limit }, // Limit results per page
+            ]);
+            return groupedProducts;
+        }
+        catch (error) {
+            console.error("Error listing products by subcategories:", error);
+            throw error;
+        }
     }
 }
 exports.ProductRepository = ProductRepository;

@@ -12,7 +12,9 @@ class CartInteractor {
     }
     async getCartByUserId(userId) {
         const cart = await this.cartRepo.findCartByUser(userId);
-        return cart ? this.mapToDTO(cart) : null;
+        //@ts-ignore
+        return cart ? cart : null;
+        // return cart ? this.mapToDTO(cart) : null;
     }
     async addItemToCart(data) {
         const updatedCart = await this.cartRepo.addItemToCart(data.userId, data.productId, data.variantId, data.quantity);

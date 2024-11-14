@@ -12,7 +12,10 @@ class WishlistInteractor {
     }
     async getWishlistByUserId(userId) {
         const wishlist = await this.wishlistRepo.findWishlistByUser(userId);
-        return wishlist ? this.mapToDTO(wishlist) : null;
+        //DEBUG
+        //@ts-ignore
+        return wishlist;
+        // return wishlist ? this.mapToDTO(wishlist) : null;
     }
     async addItemToWishlist(data) {
         const updatedWishlist = await this.wishlistRepo.addItemToWishlist(data.userId, data.productId, data.variantId);

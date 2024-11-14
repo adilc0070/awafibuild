@@ -17,6 +17,11 @@ export declare class ProductController {
     deleteProduct(req: Request, res: Response, next: NextFunction): Promise<void>;
     getAllListedProductsForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
     getProductByIdForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+<<<<<<< HEAD
+    listProductsByMainCategoryForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+    listProductsBySubCategoryForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+=======
     listProductsBySubcategoriesForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
     FilterProductsForUser(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

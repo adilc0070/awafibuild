@@ -7,7 +7,7 @@ exports.CartModel = void 0;
 // src/infrastructure/model/cartModel.ts
 const mongoose_1 = __importDefault(require("mongoose"));
 const userCartSchema = new mongoose_1.default.Schema({
-    user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
     items: [
         {
             product: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: true },

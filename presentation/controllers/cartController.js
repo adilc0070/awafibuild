@@ -32,8 +32,11 @@ class CartController {
                 return;
             }
             const cart = await this.cartInteractor.getCartByUserId(userId);
+            if (cart == null) {
+                res.status(204).json({ message: "cart is null" });
+            }
             if (cart) {
-                res.status(200).json(cart);
+                res.status(200).json({ data: cart });
             }
             else {
                 res.status(404).json({ message: "Cart not found" });
@@ -62,6 +65,7 @@ class CartController {
             res.status(200).json(updatedCart);
         }
         catch (error) {
+            console.log("error: ", error);
             next(error);
         }
     }

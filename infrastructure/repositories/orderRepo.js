@@ -32,20 +32,60 @@ class OrderRepository extends baseRepository_1.BaseRepository {
     }
     async findAll(params) {
         try {
-            const query = {};
-            if (params.status) {
-                query.orderStatus = params.status;
-            }
             const skip = (params.page - 1) * params.limit;
             const [orders, total] = await Promise.all([
-                this.model
-                    .find(query)
-                    // .populate('user')
-                    .sort({ createdAt: -1 })
-                    .skip(skip)
-                    .limit(params.limit)
-                    .exec(),
-                this.model.countDocuments(query)
+                this.model.aggregate([
+                    {
+                        $lookup: {
+                            from: 'users',
+                            let: { userId: "$user" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
+                                { $project: { password: 0, _id: 0 } } // exclude user ID and password fields
+                            ],
+                            as: 'userDetails'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'carts',
+                            let: { cartId: "$cart" },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ["$_id", "$$cartId"] } } },
+                                { $project: { _id: 0 } } // exclude cart ID
+                            ],
+                            as: 'cartDetails'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'products',
+                            let: { productIds: "$items.product", variantId: "$items.variant" },
+                            pipeline: [
+                                { $match: { $expr: { $in: ["$_id", "$$productIds"] } } },
+                                {
+                                    $project: {
+                                        name: 1, // Include product name
+                                        description: 1, // Include description if needed
+                                        images: 1,
+                                        variants: {
+                                            $filter: {
+                                                input: "$variants",
+                                                as: "variant",
+                                                cond: { $eq: ["$$variant._id", "$$variantId"] } // Only include the specified variant
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            as: 'productDetails'
+                        }
+                    },
+                    { $sort: { createdAt: -1 } },
+                    { $skip: skip },
+                    { $limit: params.limit }
+                ]),
+                this.model.countDocuments()
             ]);
             return { orders, total, page: params.page, limit: params.limit };
         }

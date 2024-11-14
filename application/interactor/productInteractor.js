@@ -143,18 +143,35 @@ class ProductInteractor {
     }
     // Filter by category
     async fetchByCategoryAndName(page, limit, filter, userId) {
+<<<<<<< HEAD
+        const ProductResponse = await this.productRepo.fetchByCategoryAndName(page, limit, filter, userId);
+=======
         const ProductResponse = await this.productRepo.fetchByCategoryAndName(page, limit, filter);
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
         const products = ProductResponse.products.map((p) => this.mapEntityToDto(p));
         return { products: products, totalPages: ProductResponse.totalPages };
     }
     // liste products under sub category using maincategory id------
+<<<<<<< HEAD
+    async listProductsByMaincategories(page, limit, mainCatId, userId) {
+        const products = await this.productRepo.listProductsBySubcategoriesUsingMainCategory(page, limit, mainCatId, userId);
+        return products;
+    }
+    async listProductsBySubcategories(page, limit, subCatId, userId) {
+        const products = await this.productRepo.listProductsBySubcategories(page, limit, subCatId, userId);
+=======
     async listProductsBySubcategories(page, limit, mainCatId, userId) {
         const products = await this.productRepo.listProductsBySubcategories(page, limit, mainCatId);
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
         return products;
     }
     // Retrieve a product by ID
     async getProductById(id, userId) {
+<<<<<<< HEAD
+        const product = await this.productRepo.productFindById(id, userId);
+=======
         const product = await this.productRepo.productFindById(id);
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
         return product ? this.mapEntityToDto(product) : null;
     }
     // Update a product by ID
@@ -203,6 +220,10 @@ class ProductInteractor {
             isListed: product.isListed,
             ean: product.ean,
             sku: product.sku,
+            inCart: product.inCart,
+            inWishlist: product.inWishlist,
+            MainCategoryData: product.MainCategoryData,
+            SubCategoryData: product.SubCategoryData
         };
     }
 }

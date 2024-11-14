@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CartRepository = void 0;
 const mongoose_1 = require("mongoose");
 const baseRepository_1 = require("./baseRepository");
 const producModel_1 = require("../model/producModel"); // Adjust the import based on your project structure
-// Cart repository extending the base repository
+const mongoose_2 = __importDefault(require("mongoose"));
+const cartModel_1 = require("../model/cartModel");
 class CartRepository extends baseRepository_1.BaseRepository {
     constructor(model) {
         super(model);
@@ -19,12 +23,46 @@ class CartRepository extends baseRepository_1.BaseRepository {
             throw new Error("Could not create cart. Please try again later.");
         }
     }
+<<<<<<< HEAD
+    // return await this.model
+    //   .findOne({ user: userId })
+    //   .exec();
+    // Repository method
+    // @ts-ignore
+    async findCartByUser(userId) {
+        try {
+            let cart = await this.model.findOne({ user: userId })
+                .populate('items.product')
+=======
     // Repository method
     async findCartByUser(userId) {
         try {
             return await this.model
                 .findOne({ user: userId })
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
                 .exec();
+            if (!cart) {
+                return null;
+            }
+            const transformedCart = cart.items.map(item => {
+                const product = item.product; // Casting to `any` for easier access to nested fields
+                const variant = product.variants.find((v) => v._id.toString() === item.variant.toString());
+                return {
+                    productId: product._id.toString(),
+                    variantId: item.variant.toString(),
+                    name: product.name,
+                    quantity: item.quantity,
+                    weight: variant ? variant.weight : null,
+                    inPrice: variant ? variant.inPrice : null,
+                    outPrice: variant ? variant.outPrice : null,
+                    images: product.images[0],
+                    stockQuantity: variant ? variant.stockQuantity : null,
+                    rating: product.rating || 0
+                };
+            });
+            // console.log("Transformed cart:", transformedCart);
+            // @ts-ignore
+            return transformedCart;
         }
         catch (error) {
             console.error("Error finding cart for user:", error);
@@ -68,34 +106,40 @@ class CartRepository extends baseRepository_1.BaseRepository {
         try {
             // Validate input
             if (!userId || !productId || !variantId || quantity === undefined) {
-                throw new Error("Invalid input parameters: userId, productId, variantId, and quantity must be provided.");
+                throw new Error("Invalid input parameters.");
             }
-            // Check product availability
+            // Check product availability (your existing logic)
             const isAvailable = await this.checkProductAvailability(productId, variantId, quantity);
             if (!isAvailable) {
                 throw new Error("Insufficient product stock.");
             }
-            let cart = await this.findCartByUser(userId);
-            // If the cart doesn't exist, create a new one
-            if (!cart) {
-                cart = await this.createCart({ userId, items: [] });
+            // Check if the product already exists in the cart
+            const cart = await cartModel_1.CartModel.findOne({
+                user: new mongoose_1.Types.ObjectId(userId),
+                'items.product': new mongoose_1.Types.ObjectId(productId),
+                'items.variant': new mongoose_1.Types.ObjectId(variantId),
+            });
+            if (cart) {
+                console.log("cart: ", cart);
+                // If product already exists, throw an error
+                throw new Error("Product already in cart.");
             }
-            // Check if the item already exists in the cart
-            const existingItemIndex = cart.items.findIndex(item => item.product.toString() === productId && item.variant.toString() === variantId);
-            if (existingItemIndex >= 0) {
-                // If it exists, update the quantity
-                cart.items[existingItemIndex].quantity += quantity;
-                return await this.model.findOneAndUpdate({ user: userId }, { items: cart.items }, // Update the entire items array
-                { new: true }).exec();
-            }
-            else {
-                // If it doesn't exist, add the new item
-                return await this.model.findOneAndUpdate({ user: userId }, { $addToSet: { items: { product: productId, variant: variantId, quantity } } }, { new: true }).exec();
-            }
+            // If the product does not exist, add it to the cart
+            const updatedCart = await cartModel_1.CartModel.findOneAndUpdate({ user: new mongoose_1.Types.ObjectId(userId) }, {
+                $push: {
+                    items: {
+                        product: new mongoose_1.Types.ObjectId(productId),
+                        variant: new mongoose_1.Types.ObjectId(variantId),
+                        quantity,
+                    },
+                },
+            }, { new: true, upsert: true } // Create a new cart if it doesn't exist
+            );
+            return updatedCart;
         }
         catch (error) {
             console.error("Error adding item to cart:", error);
-            throw new Error("Could not add item to cart. Please check product details and try again.");
+            throw new Error("Could not add item to cart.");
         }
     }
     async updateItemQuantity(userId, productId, variantId, quantity) {
@@ -113,10 +157,26 @@ class CartRepository extends baseRepository_1.BaseRepository {
     }
     async removeItemFromCart(userId, productId, variantId) {
         try {
-            const updatedCart = await this.model.findOneAndUpdate({ user: userId }, { $pull: { items: { product: productId, variant: variantId } } }, { new: true }).exec();
-            if (!updatedCart) {
+            // Convert IDs to ObjectId to ensure compatibility with schema
+            const userObjectId = new mongoose_2.default.Types.ObjectId(userId);
+            const productObjectId = new mongoose_2.default.Types.ObjectId(productId);
+            const variantObjectId = new mongoose_2.default.Types.ObjectId(variantId);
+            // Find the user's cart
+            const cart = await this.model.findOne({ user: userObjectId });
+            if (!cart) {
+                console.error("Cart not found for user.");
                 throw new Error("Cart item not found.");
             }
+            // Filter out the matching item manually
+            const updatedItems = cart.items.filter(item => !(item.product.equals(productObjectId) && item.variant.equals(variantObjectId)));
+            // Check if item was actually removed
+            if (updatedItems.length === cart.items.length) {
+                console.error("Item to remove not found in cart.");
+                throw new Error("Item not found in cart.");
+            }
+            // Update the cart with the filtered items array
+            cart.items = updatedItems;
+            const updatedCart = await cart.save();
             return updatedCart;
         }
         catch (error) {

@@ -1,6 +1,5 @@
 export interface IPaymentGateway {
-    initiatePayment(amount: number, currency: string, UniqueId: any, otherOptions?: any): Promise<any>;
-    verifyPayment(paymentId: string, signature: string): Promise<boolean>;
+    initiatePayment(paymentData: any): Promise<any>;
 }
 export interface IPaymentGatewayResponse {
     success: boolean;

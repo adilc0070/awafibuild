@@ -3,7 +3,6 @@ import { CreateOrderDTO, UpdateOrderStatusDTO } from "../../domain/dtos/OrderDto
 export default interface IOrderRepository {
     create(data: CreateOrderDTO): Promise<ICheckout>;
     findAll(params: {
-        status?: string;
         page: number;
         limit: number;
     }): Promise<{

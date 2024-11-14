@@ -32,7 +32,6 @@ class OrderController {
         try {
             const { status, page = 1, limit = 10 } = req.query;
             const orders = await this.orderInteractor.getOrders({
-                status: status,
                 page: Number(page),
                 limit: Number(limit)
             });

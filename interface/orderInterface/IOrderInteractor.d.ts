@@ -2,7 +2,6 @@ import { CreateOrderDTO, OrderDTO, UpdateOrderStatusDTO } from "../../domain/dto
 export default interface IOrderInteractor {
     createOrder(data: CreateOrderDTO): Promise<OrderDTO>;
     getOrders(params: {
-        status?: string;
         page: number;
         limit: number;
     }): Promise<{

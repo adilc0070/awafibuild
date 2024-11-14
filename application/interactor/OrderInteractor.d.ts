@@ -6,7 +6,6 @@ export declare class OrderInteractor implements IOrderInteractor {
     constructor(orderRepository: IOrderRepository);
     createOrder(data: CreateOrderDTO): Promise<OrderDTO>;
     getOrders(params: {
-        status?: string;
         page: number;
         limit: number;
     }): Promise<{

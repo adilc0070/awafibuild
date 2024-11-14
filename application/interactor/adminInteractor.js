@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminInteractor = void 0;
-let email = process.env.ADMIN_EMAIL;
-let password = process.env.ADMIN_PASSWORD;
+const env_1 = __importDefault(require("../../config/env"));
+let email = env_1.default.ADMIN_EMAIL;
+let password = env_1.default.ADMIN_PASSWORD;
 class AdminInteractor {
     userRepository;
     jwt;
@@ -14,19 +18,16 @@ class AdminInteractor {
     }
     async logIn(data) {
         if (data.email === email && password === data.password) {
-            console.log("true");
             const accessToken = this.jwt.generateToken({ id: data.email }, "30d");
             return { success: true, message: "Login successful", data: accessToken };
         }
         else {
-            console.log("false");
             return { success: false, message: "Invalid credentials" };
         }
     }
     async usersData() {
         try {
             const userData = await this.userRepository.findAll(); // Fetch users as UserDTO[]
-            console.log("userData", userData);
             return {
                 status: true,
                 data: userData,

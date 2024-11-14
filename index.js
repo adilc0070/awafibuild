@@ -20,16 +20,18 @@ const userAuthMiddleware_1 = require("./presentation/middleware/userAuthMiddlewa
 const reviewRoute_1 = __importDefault(require("./presentation/routes/reviewRoute"));
 const orderRoute_1 = __importDefault(require("./presentation/routes/orderRoute"));
 const subCategoryRoute_1 = __importDefault(require("./presentation/routes/subCategoryRoute"));
+const env_1 = __importDefault(require("./config/env"));
 const startServer = async () => {
     try {
         await (0, dbConfig_1.connectDB)();
         const app = (0, express_1.default)();
+        const port = env_1.default.PORT;
         app.use((0, morgan_1.default)("dev"));
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
         // CORS configuration
         app.use((0, cors_1.default)({
-            origin: "http://localhost:5173",
+            origin: env_1.default.Frontend_URL,
             methods: ["GET", "POST", "PUT", "DELETE"],
             allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true,
@@ -45,6 +47,9 @@ const startServer = async () => {
         app.use('/api/sub-categories', subCategoryRoute_1.default);
         app.use('/api/banner', bannerRoute_1.default);
         app.use('/api/checkout', userAuthMiddleware_1.verifyToken, checkoutRoute_1.default);
+        app.get('/test', (req, res) => {
+            res.send("hai");
+        });
         // 500 - Internal Server Error handler
         app.use((err, req, res, next) => {
             logger_1.default.error('Errors :', err);
@@ -55,8 +60,8 @@ const startServer = async () => {
             });
         });
         // Start the server
-        app.listen(3000, () => {
-            console.log(`Server active on port: ${3000}`);
+        app.listen(port, () => {
+            console.log(`Server active on port: ${port}`);
         });
     }
     catch (error) {
@@ -64,5 +69,5 @@ const startServer = async () => {
     }
 };
 startServer();
-// ts-node-dev --respawn --transpile-only src
+// ts-node-dev --respawn --transpile-only src 
 //# sourceMappingURL=index.js.map

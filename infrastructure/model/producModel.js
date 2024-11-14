@@ -60,6 +60,7 @@ const productSchema = new mongoose_1.Schema({
     ],
     variants: [
         {
+            _id: { type: mongoose_1.default.Schema.Types.ObjectId, default: () => new mongoose_1.default.Types.ObjectId() },
             weight: { type: String, required: false },
             inPrice: { type: Number, required: false },
             outPrice: { type: Number, required: false },

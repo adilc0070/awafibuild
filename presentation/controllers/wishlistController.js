@@ -10,13 +10,14 @@ class WishlistController {
     async getWishlistByUserId(req, res, next) {
         try {
             const userId = req.user?.id;
+            console.log("userId: ", userId);
             if (!userId) {
                 res.status(401).json({ message: "Unauthorized" });
                 return;
             }
             const wishlist = await this.wishlistInteractor.getWishlistByUserId(userId);
             if (wishlist) {
-                res.status(200).json(wishlist);
+                res.status(200).json({ data: wishlist });
             }
             else {
                 res.status(404).json({ message: "Wishlist not found" });

@@ -36,7 +36,17 @@ const envConfig = {
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     Atlas_Url: process.env.Atlas_Url,
     Base_Url: process.env.Base_Url,
+<<<<<<< HEAD
+    RAZORPAY_SECRET_KEY: process.env.RAZORPAY_SECRET_KEY,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    PORT: process.env.PORT,
+    Frontend_URL: process.env.Frontend_URL,
+    RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+    STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY
+=======
     RAZORPAY_SECRET_KEY: process.env.RAZORPAY_SECRET_KEY
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
     // STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY as string
 };
 // Log loaded environment variables for debugging

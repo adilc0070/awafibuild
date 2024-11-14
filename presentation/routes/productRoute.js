@@ -41,7 +41,13 @@ productRoutes.put("/product/:id", productController.updateProduct.bind(productCo
 // User product routes
 productRoutes.get("/product/filter", OptionalAuth_1.optionalAuth, productController.FilterProductsForUser.bind(productController));
 productRoutes.get("/product/listed", OptionalAuth_1.optionalAuth, productController.getAllListedProductsForUser.bind(productController));
+<<<<<<< HEAD
+productRoutes.get("/product/subCategory/:subCatId", OptionalAuth_1.optionalAuth, productController.listProductsBySubCategoryForUser.bind(productController));
+productRoutes.get("/product/:id", OptionalAuth_1.optionalAuth, productController.getProductByIdForUser.bind(productController));
+productRoutes.get("/product/mainCategory/:mainCatId", OptionalAuth_1.optionalAuth, productController.listProductsByMainCategoryForUser.bind(productController));
+=======
 productRoutes.get("/product/:id", OptionalAuth_1.optionalAuth, productController.getProductByIdForUser.bind(productController));
 productRoutes.get("/product/subCategory/:mainCatId", OptionalAuth_1.optionalAuth, productController.listProductsBySubcategoriesForUser.bind(productController));
+>>>>>>> 3f0d285c423d74a24467632dd2d0f0e4184ac3e5
 exports.default = productRoutes;
 //# sourceMappingURL=productRoute.js.map
