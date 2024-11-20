@@ -209,6 +209,9 @@ class ProductRepository extends baseRepository_1.BaseRepository {
     async updateImage(id, index, photo) {
         return await this.model.updateOne({ _id: id }, { $set: { [`images.${index}`]: photo } });
     }
+    async deleteImage(id, index) {
+        return await this.model.updateOne({ _id: id }, { $set: { [`images.${index}`]: '' } });
+    }
     async updateVariantQuantity(productId, variantId, quantity) {
         return await this.model
             .findOneAndUpdate({ _id: productId, "variants._id": variantId }, // Find the product and the specific variant
@@ -310,6 +313,14 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                 },
             },
             {
+                $lookup: {
+                    from: "reviews", // Reference the reviews collection
+                    localField: "_id", // Match the product ID
+                    foreignField: "product", // Field in the reviews collection
+                    as: "reviews", // Name of the field to hold the reviews
+                },
+            },
+            {
                 $addFields: {
                     inCart: {
                         $cond: {
@@ -325,9 +336,19 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                             else: false,
                         },
                     },
+                    averageRating: {
+                        $cond: {
+                            if: { $gt: [{ $size: "$reviews" }, 0] }, // If there are reviews
+                            then: {
+                                $avg: "$reviews.rating", // Calculate the average rating
+                            },
+                            else: 0.0, // No reviews, average is 0
+                        },
+                    },
+                    totalReviews: { $size: "$reviews" }, // Total number of reviews
                 },
             },
-            { $project: { cartItems: 0, wishlistItems: 0 } },
+            { $project: { cartItems: 0, wishlistItems: 0, reviews: 0 } }, // Exclude unnecessary fields
             { $skip: skip },
             { $limit: limit },
         ]);
@@ -406,24 +427,42 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                 },
             },
             {
+                $lookup: {
+                    from: "reviews", // Reference the reviews collection
+                    localField: "_id", // Match the product ID
+                    foreignField: "product", // Field in the reviews collection
+                    as: "reviews", // Name of the field to hold the reviews
+                },
+            },
+            {
                 $addFields: {
                     inCart: {
                         $cond: {
-                            if: { $gt: [userId, null] },
+                            if: { $gt: [userId, null] }, // Check if userId is not null
                             then: { $gt: [{ $size: "$cartItems" }, 0] },
                             else: false,
                         },
                     },
                     inWishlist: {
                         $cond: {
-                            if: { $gt: [userId, null] },
+                            if: { $gt: [userId, null] }, // Check if userId is not null
                             then: { $gt: [{ $size: "$wishlistItems" }, 0] },
                             else: false,
                         },
                     },
+                    averageRating: {
+                        $cond: {
+                            if: { $gt: [{ $size: "$reviews" }, 0] }, // If there are reviews
+                            then: {
+                                $avg: "$reviews.rating", // Calculate the average rating
+                            },
+                            else: 0.0, // No reviews, average is 0
+                        },
+                    },
+                    totalReviews: { $size: "$reviews" }, // Total number of reviews
                 },
             },
-            { $project: { cartItems: 0, wishlistItems: 0 } },
+            { $project: { cartItems: 0, wishlistItems: 0, reviews: 0 } }, // Exclude unnecessary fields
             { $skip: skip },
             { $limit: limit },
         ]);
@@ -490,6 +529,14 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                 },
             },
             {
+                $lookup: {
+                    from: "reviews", // Reference the reviews collection
+                    localField: "_id", // Match the product ID
+                    foreignField: "product", // Field in the reviews collection
+                    as: "reviews", // Name of the field to hold the reviews
+                },
+            },
+            {
                 $addFields: {
                     inCart: {
                         $cond: {
@@ -505,27 +552,41 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                             else: false,
                         },
                     },
+                    averageRating: {
+                        $cond: {
+                            if: { $gt: [{ $size: "$reviews" }, 0] }, // If reviews exist
+                            then: { $avg: "$reviews.rating" }, // Calculate average rating
+                            else: 0.0, // Default average rating to 0 if no reviews
+                        },
+                    },
+                    totalReviews: { $size: "$reviews" }, // Total count of reviews
                 },
             },
             {
                 $lookup: {
-                    from: 'maincategories',
-                    localField: 'category',
-                    foreignField: '_id',
-                    as: 'MainCategoryData'
-                }
+                    from: "maincategories",
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "MainCategoryData",
+                },
             },
             {
                 $lookup: {
-                    from: 'subcategories',
-                    localField: 'subCategory',
-                    foreignField: '_id',
-                    as: 'SubCategoryData'
-                }
+                    from: "subcategories",
+                    localField: "subCategory",
+                    foreignField: "_id",
+                    as: "SubCategoryData",
+                },
             },
             {
-                $project: { category: 0, subCategory: 0, cartItems: 0, wishlistItems: 0 }
-            }
+                $project: {
+                    category: 0,
+                    subCategory: 0,
+                    cartItems: 0,
+                    wishlistItems: 0,
+                    reviews: 0, // Exclude raw reviews data from the result
+                },
+            },
         ]);
         return product[0] || null;
     }
@@ -590,6 +651,14 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                 },
             },
             {
+                $lookup: {
+                    from: "reviews", // Replace with your reviews collection name
+                    localField: "_id",
+                    foreignField: "product",
+                    as: "reviews",
+                },
+            },
+            {
                 $addFields: {
                     inCart: {
                         $cond: {
@@ -605,31 +674,40 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                             else: false,
                         },
                     },
+                    averageRating: {
+                        $cond: {
+                            if: { $gt: [{ $size: "$reviews" }, 0] }, // If reviews exist
+                            then: { $avg: "$reviews.rating" }, // Calculate average rating
+                            else: 0.0, // Default to 0 if no reviews
+                        },
+                    },
+                    totalReviews: { $size: "$reviews" }, // Total number of reviews
                 },
             },
             {
                 $lookup: {
-                    from: 'maincategories',
-                    localField: 'category',
-                    foreignField: '_id',
-                    as: 'MainCategoryData'
-                }
+                    from: "maincategories",
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "MainCategoryData",
+                },
             },
             {
                 $lookup: {
-                    from: 'subcategories',
-                    localField: 'subCategory',
-                    foreignField: '_id',
-                    as: 'SubCategoryData'
-                }
+                    from: "subcategories",
+                    localField: "subCategory",
+                    foreignField: "_id",
+                    as: "SubCategoryData",
+                },
             },
             {
                 $project: {
                     category: 0,
                     subCategory: 0,
                     cartItems: 0,
-                    wishlistItems: 0
-                }
+                    wishlistItems: 0,
+                    reviews: 0, // Optionally remove detailed review data to avoid excessive payload
+                },
             },
             { $skip: skip },
             { $limit: limit },
@@ -688,7 +766,7 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                                                     $map: {
                                                         input: "$items",
                                                         as: "item",
-                                                        in: { $eq: ["$$item.productId", "$$productId"] },
+                                                        in: { $eq: ["$$item.product", "$$productId"] },
                                                     },
                                                 },
                                             },
@@ -698,6 +776,14 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                             },
                         ],
                         as: "wishlistItems",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "reviews", // Replace with your reviews collection name
+                        localField: "_id",
+                        foreignField: "product",
+                        as: "reviews",
                     },
                 },
                 {
@@ -716,6 +802,14 @@ class ProductRepository extends baseRepository_1.BaseRepository {
                                 else: false,
                             },
                         },
+                        averageRating: {
+                            $cond: {
+                                if: { $gt: [{ $size: "$reviews" }, 0] }, // If reviews exist
+                                then: { $avg: "$reviews.rating" }, // Calculate average rating
+                                else: 0.0, // Default to 0 if no reviews
+                            },
+                        },
+                        totalReviews: { $size: "$reviews" }, // Total number of reviews
                     },
                 },
                 {

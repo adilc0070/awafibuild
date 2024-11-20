@@ -123,6 +123,10 @@ class ProductInteractor {
         const updatedProduct = await this.productRepo.updateImage(id, index, uploadResult.secure_url);
         return updatedProduct.modifiedCount > 0 ? uploadResult.secure_url : false;
     }
+    async deleteImage(id, index) {
+        const updatedProduct = await this.productRepo.deleteImage(id, index);
+        return updatedProduct.modifiedCount > 0;
+    }
     // Retrieve all products
     async getAllProducts(page, limit) {
         const ProductResponse = await this.productRepo.findAllProducts(page, limit);
@@ -210,7 +214,9 @@ class ProductInteractor {
             inCart: product.inCart,
             inWishlist: product.inWishlist,
             MainCategoryData: product.MainCategoryData,
-            SubCategoryData: product.SubCategoryData
+            SubCategoryData: product.SubCategoryData,
+            averageRating: product.averageRating,
+            totalReviews: product.totalReviews
         };
     }
 }

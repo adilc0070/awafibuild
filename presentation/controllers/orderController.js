@@ -43,8 +43,8 @@ class OrderController {
     }
     async getOrderById(req, res, next) {
         try {
-            const orderId = req.params.id;
-            const order = await this.orderInteractor.getOrderById(orderId);
+            const orderIdentifier = new mongoose_1.default.Types.ObjectId(req.params.id);
+            const order = await this.orderInteractor.getOrderById(orderIdentifier);
             if (!order) {
                 res.status(404).json({ message: "Order not found" });
                 return;
@@ -78,7 +78,8 @@ class OrderController {
     async cancelOrder(req, res, next) {
         try {
             const orderId = req.params.id;
-            const result = await this.orderInteractor.cancelOrder(orderId);
+            const { reason } = req.body;
+            const result = await this.orderInteractor.cancelOrder(orderId, reason);
             if (!result) {
                 res.status(404).json({ message: "Order not found" });
                 return;

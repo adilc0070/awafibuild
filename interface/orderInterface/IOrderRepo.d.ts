@@ -1,5 +1,6 @@
 import { ICheckout } from "../../domain/entities/checkoutSchema";
 import { CreateOrderDTO, UpdateOrderStatusDTO } from "../../domain/dtos/OrderDto";
+import mongoose from "mongoose";
 export default interface IOrderRepository {
     create(data: CreateOrderDTO): Promise<ICheckout>;
     findAll(params: {
@@ -11,9 +12,9 @@ export default interface IOrderRepository {
         page: number;
         limit: number;
     }>;
-    findByOrderId(orderId: string): Promise<ICheckout | null>;
+    findByOrderId(orderId: mongoose.Types.ObjectId): Promise<ICheckout | null>;
     updateStatus(data: UpdateOrderStatusDTO): Promise<ICheckout | null>;
-    cancel(orderId: string): Promise<boolean>;
+    cancelOrder(orderId: string, reason: String): Promise<boolean>;
     findByUserId(params: {
         userId: string;
         status?: string;

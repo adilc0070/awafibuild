@@ -19,7 +19,7 @@ class UserInteractor {
         this.emailService = emailService;
         this.addressRepo = addressRepo;
     }
-    //=-========================================login===============
+    //=-========================================================================login===========================================================
     async login(email, password) {
         try {
             const userData = await this.userRepository.findUserEmail(email);
@@ -49,6 +49,10 @@ class UserInteractor {
                 return { success: false, message: "User already  under registration process" };
             }
             const registeredUser = await this.userRepository.findUserEmail(email);
+            const registeredMobile = await this.userRepository.findUserByMobile(phone);
+            if (registeredMobile) {
+                return { success: false, message: "user in this phone number already exists" };
+            }
             if (registeredUser) {
                 return { success: false, message: "User already present" };
             }

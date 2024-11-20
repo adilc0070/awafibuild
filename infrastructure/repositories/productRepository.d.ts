@@ -24,6 +24,7 @@ export declare class ProductRepository extends BaseRepository<IProductSchema> im
     isListedProduct(id: mongoose.Types.ObjectId): Promise<IProductSchema | null>;
     updateListing(id: mongoose.Types.ObjectId, UpdateQuery: listing): Promise<any | null>;
     updateImage(id: mongoose.Types.ObjectId, index: number, photo: string): Promise<any | null>;
+    deleteImage(id: mongoose.Types.ObjectId, index: number): Promise<any | null>;
     updateVariantQuantity(productId: mongoose.Types.ObjectId, variantId: string, quantity: number): Promise<IProductSchema | null>;
     updateProduct(id: mongoose.Types.ObjectId, data: Partial<ProductCreationDTO> | Variant): Promise<IProductSchema | null>;
     deleteProduct(id: mongoose.Types.ObjectId): Promise<boolean>;

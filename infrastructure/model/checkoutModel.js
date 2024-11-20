@@ -8,10 +8,9 @@ const mongoose_1 = __importDefault(require("mongoose"));
 // Checkout schema
 const checkoutSchema = new mongoose_1.default.Schema({
     user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true },
-    cart: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Cart", required: false },
     items: [{
-            product: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: false },
-            variant: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Variant", required: false },
+            productId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: false },
+            variantId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Variant", required: false },
             quantity: { type: Number, required: false },
             name: { type: String, required: true },
             weight: { type: String, required: true },

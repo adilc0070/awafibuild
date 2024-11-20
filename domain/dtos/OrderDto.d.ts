@@ -29,8 +29,16 @@ export interface CreateOrderDTO {
     discountAmount?: number;
 }
 export type ItemsListDTO = {
-    product: mongoose.Types.ObjectId;
+    productId: string;
+    variantId: string;
+    name: string;
+    weight: string;
     quantity: number;
+    inPrice: number;
+    outPrice: number;
+    images: string;
+    stockQuantity: number;
+    rating: number;
 };
 export interface OrderDTO {
     _id: mongoose.Types.ObjectId;

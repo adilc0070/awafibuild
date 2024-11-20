@@ -28,5 +28,7 @@ export default interface Product extends Document {
     inWishlist?: boolean;
     SubCategoryData?: any;
     MainCategoryData?: any;
+    averageRating?: number;
+    totalReviews?: number;
 }
 export {};

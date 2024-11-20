@@ -11,7 +11,6 @@ const verifyToken = (req, res, next) => {
     }
     const token = authHeader.split(' ')[1];
     const { payload, message } = jwtService.verifyToken(token);
-    console.log(message);
     if (!payload) {
         return res.status(403).json({ status: false, message });
     }

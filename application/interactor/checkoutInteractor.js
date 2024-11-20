@@ -27,7 +27,6 @@ class CheckoutInteractor {
     async processCheckout(data) {
         // Find the user's cart
         const cartItems = await this.cartRepo.findCartByUser(data.userId);
-        console.log(cartItems);
         if (!cartItems)
             throw new Error("Cart not found");
         // Prepare the checkout data to be saved
@@ -37,7 +36,6 @@ class CheckoutInteractor {
             paymentMethod: data.paymentMethod,
             orderPlacedAt: new Date(data.time),
             deliveredAt: new Date(new Date(data.time).getTime() + 3 * 24 * 60 * 60 * 1000), // 3 days after order time
-            cart: cartItems._id,
             items: cartItems,
             currency: data.currency,
             shippingAddress: data.shippingAddress, // Add shipping address

@@ -24,6 +24,9 @@ export interface IproductRepo {
     updateImage(id: mongoose.Types.ObjectId, index: number, imageUrl: string): Promise<{
         modifiedCount: number;
     }>;
+    deleteImage(id: mongoose.Types.ObjectId, index: number): Promise<{
+        modifiedCount: number;
+    }>;
     deleteProduct(id: mongoose.Types.ObjectId): Promise<boolean>;
     updateListing(id: mongoose.Types.ObjectId, data: {
         isListed: boolean;

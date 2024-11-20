@@ -6,6 +6,7 @@ import { UserDTO } from "../../domain/dtos/AdminDto";
 export declare class UserRepo extends BaseRepository<IuserDocument> implements IUserRepo {
     constructor();
     findUserEmail(email: string): Promise<IuserDocument | null>;
+    findUserByMobile(phone: number): Promise<IuserDocument | null>;
     findUser(id: string): Promise<IuserDocument | null>;
     registerUser(userData: InewUserData): Promise<string>;
     updatePassword(id: string, hashedPassword: string): Promise<void>;

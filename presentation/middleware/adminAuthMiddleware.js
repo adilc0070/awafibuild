@@ -5,7 +5,6 @@ const jwtService_1 = require("../../application/services/jwtService");
 const email = process.env.ADMIN_EMAIL; // Get the admin email from the environment variables
 const jwtService = new jwtService_1.JWT();
 const verifyAdminToken = (req, res, next) => {
-    console.log("reached on authntication middle");
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'No token provided' });

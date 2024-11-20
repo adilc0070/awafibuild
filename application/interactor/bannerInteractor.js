@@ -85,7 +85,6 @@ class BannerInteractor {
                     updatedAt: banner.updatedAt,
                 };
             });
-            console.log(filteredBanners, "filtered banner");
             return filteredBanners;
         }
         catch (error) {

@@ -17,6 +17,7 @@ const categoryModel_1 = __importDefault(require("../../infrastructure/model/cate
 const subCategoryModel_1 = __importDefault(require("../../infrastructure/model/subCategoryModel"));
 const subCategoryRepository_1 = require("../../infrastructure/repositories/subCategoryRepository");
 const OptionalAuth_1 = require("../middleware/OptionalAuth");
+const adminAuthMiddleware_1 = require("../middleware/adminAuthMiddleware");
 const productRepo = new productRepository_1.ProductRepository(producModel_1.ProductModel);
 const categoryRepo = new categoryRepository_1.CategoryRepository(categoryModel_1.default);
 const subCategoryRepo = new subCategoryRepository_1.SubCategoryRepository(subCategoryModel_1.default);
@@ -26,18 +27,19 @@ const productInteractor = new productInteractor_1.ProductInteractor(productRepo,
 const productController = new productController_1.ProductController(productInteractor);
 const productRoutes = express_1.default.Router();
 // Admin product routes
-productRoutes.get("/product/listed/admin", productController.getAllListedProducts.bind(productController));
-productRoutes.put("/product/admin/:id", productController.updateProduct.bind(productController));
-productRoutes.get("/product/admin/:id", productController.getProductById.bind(productController));
-productRoutes.get("/product/search/admin", productController.SearchByName.bind(productController));
-productRoutes.post("/product/bulk/upload/admin", multerConfig_1.uploadExcel.single("file"), productController.bulkAdding.bind(productController));
-productRoutes.get("/product/bulk/download/admin", productController.bulkDownload.bind(productController));
-productRoutes.post("/product/admin", multerConfig_1.uploadImages.array("images", 5), productController.addProduct.bind(productController));
-productRoutes.patch("/product/update-img/admin", multerConfig_1.uploadImages.single("image"), productController.updateImage.bind(productController));
-productRoutes.get("/product/admin", productController.getAllProducts.bind(productController));
-productRoutes.patch("/product/list-status/admin/:id", productController.toggleListStatus.bind(productController));
-productRoutes.patch("/product/delete/admin/:id", productController.deleteProduct.bind(productController));
-productRoutes.put("/product/:id", productController.updateProduct.bind(productController));
+productRoutes.get("/product/listed/admin", adminAuthMiddleware_1.verifyAdminToken, productController.getAllListedProducts.bind(productController));
+productRoutes.put("/product/admin/:id", adminAuthMiddleware_1.verifyAdminToken, productController.updateProduct.bind(productController));
+productRoutes.get("/product/admin/:id", adminAuthMiddleware_1.verifyAdminToken, productController.getProductById.bind(productController));
+productRoutes.get("/product/search/admin", adminAuthMiddleware_1.verifyAdminToken, productController.SearchByName.bind(productController));
+productRoutes.post("/product/bulk/upload/admin", adminAuthMiddleware_1.verifyAdminToken, multerConfig_1.uploadExcel.single("file"), productController.bulkAdding.bind(productController));
+productRoutes.get("/product/bulk/download/admin", adminAuthMiddleware_1.verifyAdminToken, productController.bulkDownload.bind(productController));
+productRoutes.post("/product/admin", adminAuthMiddleware_1.verifyAdminToken, multerConfig_1.uploadImages.array("images", 5), productController.addProduct.bind(productController));
+productRoutes.patch("/product/update-img/admin", adminAuthMiddleware_1.verifyAdminToken, multerConfig_1.uploadImages.single("image"), productController.updateImage.bind(productController));
+productRoutes.delete("/product/delete-img/admin", adminAuthMiddleware_1.verifyAdminToken, productController.deleteImage.bind(productController));
+productRoutes.get("/product/admin", adminAuthMiddleware_1.verifyAdminToken, productController.getAllProducts.bind(productController));
+productRoutes.patch("/product/list-status/admin/:id", adminAuthMiddleware_1.verifyAdminToken, productController.toggleListStatus.bind(productController));
+productRoutes.patch("/product/delete/admin/:id", adminAuthMiddleware_1.verifyAdminToken, productController.deleteProduct.bind(productController));
+productRoutes.put("/product/:id", adminAuthMiddleware_1.verifyAdminToken, productController.updateProduct.bind(productController));
 // User product routes
 productRoutes.get("/product/filter", OptionalAuth_1.optionalAuth, productController.FilterProductsForUser.bind(productController));
 productRoutes.get("/product/listed", OptionalAuth_1.optionalAuth, productController.getAllListedProductsForUser.bind(productController));

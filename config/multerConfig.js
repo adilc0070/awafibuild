@@ -43,7 +43,7 @@ exports.uploadImages = (0, multer_1.default)({
     limits: { fileSize: 50000000 }, // Limit file size to 50 MB
     fileFilter: (req, file, cb) => {
         // Accept only certain file types (e.g., images)
-        const filetypes = /jpeg|jpg|png|gif/; // Allowed file extensions
+        const filetypes = /jpeg|jpg|png|gif|webp/; // Allowed file extensions
         const extname = filetypes.test(path_1.default.extname(file.originalname).toLowerCase());
         const mimetype = filetypes.test(file.mimetype);
         if (mimetype && extname) {
@@ -97,7 +97,7 @@ exports.uploadCategoryImage = (0, multer_1.default)({
     limits: { fileSize: 5000000 }, // Limit file size to 5 MB for category images
     fileFilter: (req, file, cb) => {
         // Accept only image file types (jpeg, jpg, png, gif)
-        const filetypes = /jpeg|jpg|png|gif/;
+        const filetypes = /jpeg|jpg|png|gif|webp/;
         const extname = filetypes.test(path_1.default.extname(file.originalname).toLowerCase());
         const mimetype = filetypes.test(file.mimetype);
         if (mimetype && extname) {

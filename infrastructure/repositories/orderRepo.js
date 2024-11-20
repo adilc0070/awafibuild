@@ -47,38 +47,21 @@ class OrderRepository extends baseRepository_1.BaseRepository {
                         }
                     },
                     {
-                        $lookup: {
-                            from: 'carts',
-                            let: { cartId: "$cart" },
-                            pipeline: [
-                                { $match: { $expr: { $eq: ["$_id", "$$cartId"] } } },
-                                { $project: { _id: 0 } } // exclude cart ID
-                            ],
-                            as: 'cartDetails'
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: 'products',
-                            let: { productIds: "$items.product", variantId: "$items.variant" },
-                            pipeline: [
-                                { $match: { $expr: { $in: ["$_id", "$$productIds"] } } },
-                                {
-                                    $project: {
-                                        name: 1, // Include product name
-                                        description: 1, // Include description if needed
-                                        images: 1,
-                                        variants: {
-                                            $filter: {
-                                                input: "$variants",
-                                                as: "variant",
-                                                cond: { $eq: ["$$variant._id", "$$variantId"] } // Only include the specified variant
-                                            }
-                                        }
-                                    }
-                                }
-                            ],
-                            as: 'productDetails'
+                        $project: {
+                            _id: 1,
+                            user: 1,
+                            trackingId: 1, // Make sure trackingId is included in the projection
+                            orderStatus: 1,
+                            paymentStatus: 1,
+                            amount: 1,
+                            currency: 1,
+                            items: 1,
+                            shippingAddress: 1,
+                            paymentMethod: 1,
+                            createdAt: 1,
+                            updatedAt: 1,
+                            discountAmount: 1,
+                            userDetails: { $arrayElemAt: ["$userDetails", 0] } // Flatten userDetails array
                         }
                     },
                     { $sort: { createdAt: -1 } },
@@ -95,9 +78,8 @@ class OrderRepository extends baseRepository_1.BaseRepository {
     }
     async findByOrderId(orderId) {
         try {
-            const orderObjectId = this.validateAndConvertId(orderId, 'Order');
             return await this.model
-                .findById(orderObjectId)
+                .findById(orderId)
                 // .populate('user')
                 .exec();
         }
@@ -120,7 +102,7 @@ class OrderRepository extends baseRepository_1.BaseRepository {
             throw new Error(`Error updating order status: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
-    async cancel(orderId) {
+    async cancelOrder(orderId, reason) {
         try {
             const orderObjectId = this.validateAndConvertId(orderId, 'Order');
             const result = await this.model.findOneAndUpdate({
@@ -129,6 +111,7 @@ class OrderRepository extends baseRepository_1.BaseRepository {
             }, {
                 $set: {
                     orderStatus: 'cancelled',
+                    cancellationReason: reason,
                     updatedAt: new Date()
                 }
             }).exec();

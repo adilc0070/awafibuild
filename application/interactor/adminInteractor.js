@@ -10,11 +10,9 @@ let password = env_1.default.ADMIN_PASSWORD;
 class AdminInteractor {
     userRepository;
     jwt;
-    checkoutRepo;
-    constructor(userRepository, jwt, checkoutRepo) {
+    constructor(userRepository, jwt) {
         this.userRepository = userRepository;
         this.jwt = jwt;
-        this.checkoutRepo = checkoutRepo;
     }
     async logIn(data) {
         if (data.email === email && password === data.password) {
@@ -76,46 +74,6 @@ class AdminInteractor {
         catch (error) {
             console.error("Error blocking user:", error);
             return { success: false };
-        }
-    }
-    async totalOrders() {
-        try {
-            const result = await this.checkoutRepo.viewAllorders();
-            return result;
-        }
-        catch (err) {
-            throw err;
-        }
-    }
-    async totalRevenue(period) {
-        try {
-            const result = await this.checkoutRepo.viewRevenue(period);
-            return result;
-        }
-        catch (error) {
-            console.log(error);
-            throw error;
-        }
-    }
-    async salesReport(reportType, startDate, endDate) {
-        try {
-            console.log('====================================');
-            console.log('Generating sales report with parameters:', { reportType, startDate, endDate });
-            console.log('====================================');
-            // Ensure that all necessary parameters are provided
-            if (!reportType || !startDate || !endDate) {
-                throw new Error("Missing required parameters for generating sales report.");
-            }
-            // Call the repository method to generate the report
-            const result = await this.checkoutRepo.generateProductSalesReport(startDate, endDate, reportType);
-            console.log("result", result);
-            // Handle or return the result as needed
-            return result;
-        }
-        catch (error) {
-            console.error('Error generating sales report:', error);
-            // Optionally rethrow the error or handle it as needed
-            throw error;
         }
     }
 }

@@ -18,4 +18,5 @@ export default interface IProductInteractor {
     listById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
     unListById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
     updateImage(id: mongoose.Types.ObjectId, index: number, file: string): Promise<any>;
+    deleteImage(id: mongoose.Types.ObjectId, index: number): Promise<boolean>;
 }

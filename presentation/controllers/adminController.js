@@ -48,46 +48,6 @@ class AdminController {
             return res.status(401).json({ status: false, message: result.message });
         }
     }
-    async dashTotalOrders(req, res, next) {
-        try {
-            const result = await this.adminInteractor.totalOrders();
-            return res.status(200).json({ status: true, data: result });
-        }
-        catch (error) {
-            console.error('Error in dashTotalOrders:', error);
-            return res.status(500).json({ status: false, message: 'Internal server error' });
-        }
-    }
-    async dashTotalRevenue(req, res, next) {
-        try {
-            let period;
-            if (typeof req.query.period === 'string') {
-                period = req.query.period;
-            }
-            else {
-                period = undefined;
-            }
-            const result = await this.adminInteractor.totalRevenue(period);
-            return res.json(result);
-        }
-        catch (error) {
-            console.log(error);
-            next(error);
-        }
-    }
-    async salesReport(req, res, next) {
-        try {
-            console.log('====================================');
-            console.log("reachd here.................", req.query);
-            console.log('====================================');
-            const reportType = req.query.reportType;
-            const startDate = req.query.startDate;
-            const endDate = req.query.endDate;
-            const result = await this.adminInteractor.salesReport(reportType, startDate, endDate);
-        }
-        catch (error) {
-        }
-    }
 }
 exports.AdminController = AdminController;
 //# sourceMappingURL=adminController.js.map

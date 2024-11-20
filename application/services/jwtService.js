@@ -27,15 +27,6 @@ class JWT {
             };
         }
     }
-    verifyRefreshToken(token) {
-        try {
-            const decoded = jsonwebtoken_1.default.verify(token, "JWT_PUBLIC_KEY");
-            return decoded;
-        }
-        catch (error) {
-            return null;
-        }
-    }
 }
 exports.JWT = JWT;
 //# sourceMappingURL=jwtService.js.map

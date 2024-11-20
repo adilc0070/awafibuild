@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { CreateOrderDTO, UpdateOrderStatusDTO } from "../../domain/dtos/OrderDto";
 import { ICheckout } from "../../domain/entities/checkoutSchema";
 import { BaseRepository } from "./baseRepository";
@@ -16,9 +16,9 @@ export declare class OrderRepository extends BaseRepository<ICheckout> implement
         page: number;
         limit: number;
     }>;
-    findByOrderId(orderId: string): Promise<ICheckout | null>;
+    findByOrderId(orderId: mongoose.Types.ObjectId): Promise<ICheckout | null>;
     updateStatus(data: UpdateOrderStatusDTO): Promise<ICheckout | null>;
-    cancel(orderId: string): Promise<boolean>;
+    cancelOrder(orderId: string, reason: string): Promise<boolean>;
     findByUserId(params: {
         userId: string;
         status?: string;

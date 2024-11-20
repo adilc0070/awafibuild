@@ -21,7 +21,7 @@ const orderRoutes = express_1.default.Router();
 orderRoutes.get("/order/admin", adminAuthMiddleware_1.verifyAdminToken, orderController.getOrders.bind(orderController));
 orderRoutes.get("/order/admin/:id", adminAuthMiddleware_1.verifyAdminToken, orderController.getOrderById.bind(orderController));
 orderRoutes.patch("/order/admin/:id/status", adminAuthMiddleware_1.verifyAdminToken, orderController.updateOrderStatus.bind(orderController));
-orderRoutes.delete("/order/admin/:id", adminAuthMiddleware_1.verifyAdminToken, orderController.cancelOrder.bind(orderController));
+orderRoutes.patch("/order/admin/:id", adminAuthMiddleware_1.verifyAdminToken, orderController.cancelOrder.bind(orderController));
 // User routes
 orderRoutes.post("/order", userAuthMiddleware_1.verifyToken, orderController.createOrder.bind(orderController));
 orderRoutes.get("/order/user", userAuthMiddleware_1.verifyToken, orderController.getUserOrders.bind(orderController));

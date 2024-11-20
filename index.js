@@ -21,6 +21,8 @@ const reviewRoute_1 = __importDefault(require("./presentation/routes/reviewRoute
 const orderRoute_1 = __importDefault(require("./presentation/routes/orderRoute"));
 const subCategoryRoute_1 = __importDefault(require("./presentation/routes/subCategoryRoute"));
 const env_1 = __importDefault(require("./config/env"));
+const dashboardRoute_1 = __importDefault(require("./presentation/routes/dashboardRoute"));
+const adminAuthMiddleware_1 = require("./presentation/middleware/adminAuthMiddleware");
 const startServer = async () => {
     try {
         await (0, dbConfig_1.connectDB)();
@@ -32,12 +34,13 @@ const startServer = async () => {
         // CORS configuration
         app.use((0, cors_1.default)({
             origin: env_1.default.Frontend_URL,
-            methods: ["GET", "POST", "PUT", "DELETE"],
+            methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
             allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true,
         }));
         app.use('/api/user', userRoute_1.default);
         app.use('/api/admin', adminRoute_1.default);
+        app.use('/api/dashboard', adminAuthMiddleware_1.verifyAdminToken, dashboardRoute_1.default);
         app.use('/api/orders', orderRoute_1.default);
         app.use('/api/products', productRoute_1.default);
         app.use('/api/cart', userAuthMiddleware_1.verifyToken, cartRoute_1.default);

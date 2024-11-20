@@ -19,6 +19,7 @@ export declare class ProductInteractor implements IProductInteractor {
     addBulkProduct(productData: any): Promise<any>;
     bulkDownload(): Promise<any>;
     updateImage(id: mongoose.Types.ObjectId, index: number, path: string): Promise<boolean | string>;
+    deleteImage(id: mongoose.Types.ObjectId, index: number): Promise<boolean>;
     getAllProducts(page: number, limit: number): Promise<ProductResponseDTO>;
     getAllListedProducts(page: number, limit: number, userId?: mongoose.Types.ObjectId | null): Promise<ProductResponseDTO>;
     SearchByName(page: number, limit: number, productName: string): Promise<ProductResponseDTO>;

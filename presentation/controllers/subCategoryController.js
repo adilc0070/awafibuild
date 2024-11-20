@@ -87,6 +87,9 @@ class SubCategoryController {
             const productId = new mongoose_1.default.Types.ObjectId(req.params.id); // Convert string to ObjectId
             const updatedData = req.body;
             const updatedProduct = await this.categoryInteractor.updateCategory(productId, updatedData);
+            if (updatedProduct?.status) {
+                res.status(updatedProduct.status).json({ message: updatedProduct.message });
+            }
             if (updatedProduct) {
                 res.status(200).json(updatedProduct);
             }

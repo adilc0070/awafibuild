@@ -16,6 +16,15 @@ class UserRepo extends baseRepository_1.BaseRepository {
             throw error;
         }
     }
+    async findUserByMobile(phone) {
+        try {
+            return await this.model.findOne({ phone });
+        }
+        catch (error) {
+            console.error("Error finding user:", error);
+            throw error;
+        }
+    }
     async findUser(id) {
         try {
             return await this.model.findById(id);

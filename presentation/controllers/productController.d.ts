@@ -7,6 +7,7 @@ export declare class ProductController {
     bulkAdding(req: Request, res: Response, next: NextFunction): Promise<void>;
     bulkDownload(req: Request, res: Response, next: NextFunction): Promise<void>;
     updateImage(req: Request, res: Response, next: NextFunction): Promise<void>;
+    deleteImage(req: Request, res: Response, next: NextFunction): Promise<void>;
     getAllProducts(req: Request, res: Response, next: NextFunction): Promise<void>;
     getAllListedProducts(req: Request, res: Response, next: NextFunction): Promise<void>;
     SearchByName(req: Request, res: Response, next: NextFunction): Promise<void>;

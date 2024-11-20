@@ -23,7 +23,7 @@ export interface RemoveFromCartDTO {
     productId: string;
     variantId: string;
 }
-interface IProductDetails {
+export interface IProductDetails {
     productId: string;
     variantId: string;
     name: string;
@@ -36,4 +36,3 @@ interface IProductDetails {
     rating: number;
 }
 export type IUserCartReturnDTO = IProductDetails[];
-export {};

@@ -15,8 +15,8 @@ declare const reviewSchema: mongoose.Schema<any, mongoose.Model<any, any, any, a
     comment: string;
     user: mongoose.Types.ObjectId;
     product: mongoose.Types.ObjectId;
-    rating: number;
     order: mongoose.Types.ObjectId;
+    rating: number;
 }, mongoose.Document<unknown, {}, mongoose.FlatRecord<{
     createdAt: NativeDate;
     updatedAt: NativeDate;
@@ -24,8 +24,8 @@ declare const reviewSchema: mongoose.Schema<any, mongoose.Model<any, any, any, a
     comment: string;
     user: mongoose.Types.ObjectId;
     product: mongoose.Types.ObjectId;
-    rating: number;
     order: mongoose.Types.ObjectId;
+    rating: number;
 }>> & mongoose.FlatRecord<{
     createdAt: NativeDate;
     updatedAt: NativeDate;
@@ -33,8 +33,8 @@ declare const reviewSchema: mongoose.Schema<any, mongoose.Model<any, any, any, a
     comment: string;
     user: mongoose.Types.ObjectId;
     product: mongoose.Types.ObjectId;
-    rating: number;
     order: mongoose.Types.ObjectId;
+    rating: number;
 }> & {
     _id: mongoose.Types.ObjectId;
 } & {
