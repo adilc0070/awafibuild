@@ -144,6 +144,15 @@ class CategoryController {
             next(error);
         }
     }
+    async availablePrioritySlots(req, res, next) {
+        try {
+            const slots = await this.categoryInteractor.availblePrioritySlots();
+            res.status(200).json(slots);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 exports.CategoryController = CategoryController;
 //# sourceMappingURL=categoryController.js.map

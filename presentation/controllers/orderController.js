@@ -75,6 +75,26 @@ class OrderController {
             next(error);
         }
     }
+    async actionOnReturnOrder(req, res, next) {
+        try {
+            const userId = req.user?.id;
+            const orderId = req.params.id;
+            const { productId, variantId, returnStatus } = req.body;
+            if (!userId) {
+                res.status(401).json({ message: "Unauthorized" });
+                return;
+            }
+            const result = await this.orderInteractor.actionOnReturnOrder(orderId, req.body);
+            if (!result) {
+                res.status(404).json({ message: "Order not found" });
+                return;
+            }
+            res.status(200).json({ result });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
     async cancelOrder(req, res, next) {
         try {
             const orderId = req.params.id;
@@ -144,6 +164,26 @@ class OrderController {
                 return;
             }
             res.status(200).json({ message: "Order cancelled successfully", reason });
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    async returnUserOrder(req, res, next) {
+        try {
+            const userId = req.user?.id;
+            const orderId = req.params.id;
+            const { returnReason, productId, variantId } = req.body;
+            if (!userId) {
+                res.status(401).json({ message: "Unauthorized" });
+                return;
+            }
+            const result = await this.orderInteractor.returnUserOrder(orderId, userId, req.body);
+            if (!result) {
+                res.status(404).json({ message: "Order not found" });
+                return;
+            }
+            res.status(200).json({ result });
         }
         catch (error) {
             next(error);

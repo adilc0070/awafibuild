@@ -8,4 +8,6 @@ export default interface IsubCategory extends Document {
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
+    priority: number;
+    photo: string;
 }

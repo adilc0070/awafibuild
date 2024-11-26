@@ -15,36 +15,33 @@ export interface ShippingAddressDTO {
 }
 export interface CheckoutDTO {
     userId: string;
-    amount: number;
-    currency: string;
-    paymentMethod: 'COD' | 'Razorpay' | 'Stripe';
-    time: Date;
+    paymentMethod: 'COD' | 'Tabby' | 'Stripe';
     shippingAddress: ShippingAddressDTO;
+    currency: string;
     transactionId: string;
-    paymentStatus: 'pending' | 'completed' | 'failed';
+    amount: number;
+    paymentStatus: "pending" | "completed" | "failed";
 }
 export interface CheckoutCreateDTO {
     user: mongoose.Types.ObjectId;
+    cartId?: mongoose.Types.ObjectId;
     amount: number;
     currency: string;
-    paymentMethod: 'COD' | 'Razorpay' | 'Stripe';
+    paymentMethod: 'COD' | 'Tabby' | 'Stripe';
     orderPlacedAt: Date;
-    deliveredAt: Date;
     items: {
         productId: string;
         variantId: string;
         name: string;
-        quantity: number;
         weight: string;
-        inPrice: number;
-        outPrice: number;
+        quantity: number;
+        price: number;
         images: string;
-        stockQuantity: number;
-        rating: number;
     }[];
     shippingAddress: ShippingAddressDTO;
-    transactionId: string;
     paymentStatus: "pending" | "completed" | "failed";
+    transactionId: string;
+    deliveredAt: Date;
 }
 export interface OrderSummary {
     totalCount: number;

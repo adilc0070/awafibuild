@@ -7,8 +7,10 @@ export declare class OrderController {
     getOrders(req: Request, res: Response, next: NextFunction): Promise<void>;
     getOrderById(req: Request, res: Response, next: NextFunction): Promise<void>;
     updateOrderStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
+    actionOnReturnOrder(req: Request, res: Response, next: NextFunction): Promise<void>;
     cancelOrder(req: Request, res: Response, next: NextFunction): Promise<void>;
     getUserOrders(req: Request, res: Response, next: NextFunction): Promise<void>;
     getUserOrderById(req: Request, res: Response, next: NextFunction): Promise<void>;
     cancelUserOrder(req: Request, res: Response, next: NextFunction): Promise<void>;
+    returnUserOrder(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

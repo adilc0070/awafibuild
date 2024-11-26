@@ -23,6 +23,8 @@ const subCategoryRoute_1 = __importDefault(require("./presentation/routes/subCat
 const env_1 = __importDefault(require("./config/env"));
 const dashboardRoute_1 = __importDefault(require("./presentation/routes/dashboardRoute"));
 const adminAuthMiddleware_1 = require("./presentation/middleware/adminAuthMiddleware");
+const adminReviewRoute_1 = __importDefault(require("./presentation/routes/adminReviewRoute"));
+const adminSalesRoute_1 = require("./presentation/routes/adminSalesRoute");
 const startServer = async () => {
     try {
         await (0, dbConfig_1.connectDB)();
@@ -33,23 +35,29 @@ const startServer = async () => {
         app.use(express_1.default.urlencoded({ extended: true }));
         // CORS configuration
         app.use((0, cors_1.default)({
-            origin: env_1.default.Frontend_URL,
-            methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
+            origin: env_1.default.Frontend_URL, // Allow only the frontend domain
+            methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true,
         }));
+        // Ensure the OPTIONS requests are handled
+        app.options("*", (0, cors_1.default)()); // Enable CORS preflight for all routes
         app.use('/api/user', userRoute_1.default);
         app.use('/api/admin', adminRoute_1.default);
         app.use('/api/dashboard', adminAuthMiddleware_1.verifyAdminToken, dashboardRoute_1.default);
+        app.use('/api/dashboard', dashboardRoute_1.default);
         app.use('/api/orders', orderRoute_1.default);
         app.use('/api/products', productRoute_1.default);
         app.use('/api/cart', userAuthMiddleware_1.verifyToken, cartRoute_1.default);
         app.use('/api/review', userAuthMiddleware_1.verifyToken, reviewRoute_1.default);
+        //TODO add the admin checking middleare here 
+        app.use('/api/adminReview', adminReviewRoute_1.default);
         app.use('/api/wishlist', userAuthMiddleware_1.verifyToken, wishlistRoute_1.default);
         app.use('/api/categories', categoryRoute_1.default);
         app.use('/api/sub-categories', subCategoryRoute_1.default);
         app.use('/api/banner', bannerRoute_1.default);
         app.use('/api/checkout', userAuthMiddleware_1.verifyToken, checkoutRoute_1.default);
+        app.use('/api/sales', (0, adminSalesRoute_1.setupAdminSalesRoutes)());
         app.get('/test', (req, res) => {
             res.send("hai");
         });

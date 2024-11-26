@@ -5,6 +5,7 @@ declare class DashboardInteractor implements IDashboardInteractor {
     private chekoutRepository;
     constructor(chekoutRepository: IDashboardRepository);
     totalOrders(): Promise<OrderSummary[]>;
+    topSellings(): Promise<any>;
     totalRevenue(period?: string): Promise<any>;
     salesReport(reportType?: 'day' | 'week' | 'month' | 'year', startDate?: Date, endDate?: Date): Promise<any>;
 }

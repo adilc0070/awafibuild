@@ -6,36 +6,23 @@ class DashboardInteractor {
         this.chekoutRepository = chekoutRepository;
     }
     async totalOrders() {
-        try {
-            const result = await this.chekoutRepository.viewAllOrders();
-            return result;
-        }
-        catch (err) {
-            throw err;
-        }
+        const result = await this.chekoutRepository.viewAllOrders();
+        return result;
+    }
+    async topSellings() {
+        const products = await this.chekoutRepository.topSellingProduct();
+        return { products };
     }
     async totalRevenue(period) {
-        try {
-            const result = await this.chekoutRepository.viewRevenue(period);
-            return result;
-        }
-        catch (error) {
-            console.log(error);
-            throw error;
-        }
+        const result = await this.chekoutRepository.viewRevenue(period);
+        return result;
     }
     async salesReport(reportType, startDate, endDate) {
-        try {
-            if (!reportType || !startDate || !endDate) {
-                throw new Error("Missing required parameters for generating sales report.");
-            }
-            const result = await this.chekoutRepository.generateProductSalesReport(startDate, endDate, reportType);
-            return result;
+        if (!reportType || !startDate || !endDate) {
+            throw new Error("Missing required parameters for generating sales report.");
         }
-        catch (error) {
-            console.error('Error generating sales report:', error);
-            throw error;
-        }
+        const result = await this.chekoutRepository.generateProductSalesReport(startDate, endDate, reportType);
+        return result;
     }
 }
 exports.default = DashboardInteractor;

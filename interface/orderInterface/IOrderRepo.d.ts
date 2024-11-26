@@ -28,4 +28,17 @@ export default interface IOrderRepository {
     }>;
     findByOrderIdAndUserId(orderId: string, userId: string): Promise<ICheckout | null>;
     cancelWithReason(orderId: string, userId: string, cancellationReason: string): Promise<boolean>;
+    returnOneProduct(orderId: string, returnData: {
+        returnReason: string;
+        productId: string;
+        variantId: string;
+    }): Promise<any>;
+    returnTheOrder(orderId: string, returnReason: string): Promise<any>;
+    returnOrder(orderId: string, returnStatus: 'approved' | 'rejected'): Promise<any>;
+    actionOnReturnOneProduct(orderId: string, data: {
+        productId: string;
+        variantId: string;
+        returnStatus: 'approved' | 'rejected';
+        refundAmount: number;
+    }): Promise<ICheckout | null>;
 }

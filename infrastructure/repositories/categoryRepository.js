@@ -13,7 +13,10 @@ class CategoryRepository extends baseRepository_1.BaseRepository {
     async getAllCategories(page, limit) {
         const skip = (page - 1) * limit;
         const totalCategories = await this.model.countDocuments();
-        const categories = await this.model.find({ isDeleted: false }).skip(skip).limit(limit);
+        const categories = await this.model.find({ isDeleted: false })
+            .sort({ priority: 1 })
+            .skip(skip)
+            .limit(limit);
         return {
             data: categories,
             totalPages: Math.ceil(totalCategories / limit)
@@ -40,6 +43,7 @@ class CategoryRepository extends baseRepository_1.BaseRepository {
         const skip = (page - 1) * limit;
         const totalCategories = await this.model.countDocuments({ isListed: true, isDeleted: false });
         const categories = await this.model.find({ isListed: true, isDeleted: false })
+            .sort({ priority: 1 })
             .skip(skip)
             .limit(limit);
         return {

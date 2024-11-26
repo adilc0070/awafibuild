@@ -49,6 +49,14 @@ const SubCategorySchema = new mongoose_1.Schema({
     isDeleted: {
         type: Boolean,
         default: false, // Default value is false
+    },
+    photo: {
+        type: String,
+        required: true,
+    },
+    priority: {
+        type: Number,
+        default: 101,
     }
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

@@ -22,10 +22,12 @@ orderRoutes.get("/order/admin", adminAuthMiddleware_1.verifyAdminToken, orderCon
 orderRoutes.get("/order/admin/:id", adminAuthMiddleware_1.verifyAdminToken, orderController.getOrderById.bind(orderController));
 orderRoutes.patch("/order/admin/:id/status", adminAuthMiddleware_1.verifyAdminToken, orderController.updateOrderStatus.bind(orderController));
 orderRoutes.patch("/order/admin/:id", adminAuthMiddleware_1.verifyAdminToken, orderController.cancelOrder.bind(orderController));
+orderRoutes.put("/order/admin/return/:id", adminAuthMiddleware_1.verifyAdminToken, orderController.actionOnReturnOrder.bind(orderController));
 // User routes
 orderRoutes.post("/order", userAuthMiddleware_1.verifyToken, orderController.createOrder.bind(orderController));
 orderRoutes.get("/order/user", userAuthMiddleware_1.verifyToken, orderController.getUserOrders.bind(orderController));
 orderRoutes.get("/order/user/:id", userAuthMiddleware_1.verifyToken, orderController.getUserOrderById.bind(orderController));
-orderRoutes.patch("/order/user/:id/cancel", userAuthMiddleware_1.verifyToken, orderController.cancelUserOrder.bind(orderController));
+orderRoutes.patch("/order/user/cancel/:id", userAuthMiddleware_1.verifyToken, orderController.cancelUserOrder.bind(orderController));
+orderRoutes.put("/order/user/return/:id", userAuthMiddleware_1.verifyToken, orderController.returnUserOrder.bind(orderController));
 exports.default = orderRoutes;
 //# sourceMappingURL=orderRoute.js.map

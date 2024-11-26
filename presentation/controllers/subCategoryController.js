@@ -14,6 +14,10 @@ class SubCategoryController {
     async addCategory(req, res, next) {
         try {
             const category = req.body;
+            const photo = req.file;
+            if (photo && typeof photo.path == "string") {
+                category.photo = photo.path;
+            }
             const result = await this.categoryInteractor.addCategory(category);
             if (result?.status) {
                 res.status(result.status).json({ message: result.message });
@@ -86,6 +90,10 @@ class SubCategoryController {
         try {
             const productId = new mongoose_1.default.Types.ObjectId(req.params.id); // Convert string to ObjectId
             const updatedData = req.body;
+            const photo = req.file;
+            if (photo && typeof photo.path == "string") {
+                updatedData.photo = photo.path;
+            }
             const updatedProduct = await this.categoryInteractor.updateCategory(productId, updatedData);
             if (updatedProduct?.status) {
                 res.status(updatedProduct.status).json({ message: updatedProduct.message });
@@ -134,6 +142,15 @@ class SubCategoryController {
             else {
                 res.status(404).json({ message: "Category not found" });
             }
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    async availablePrioritySlots(req, res, next) {
+        try {
+            const slots = await this.categoryInteractor.availblePrioritySlots();
+            res.status(200).json(slots);
         }
         catch (error) {
             next(error);

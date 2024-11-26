@@ -37,6 +37,21 @@ class CheckoutController {
             next(error);
         }
     }
+    async verifyPayment(req, res, next) {
+        try {
+            const userId = req.user?.id;
+            const { paymentMethod, clientSecret } = req.body;
+            if (!userId) {
+                res.status(401).json({ message: "Unauthorized" });
+                return;
+            }
+            const checkoutResponse = await this.checkoutInteractor.getVerifyPayment(paymentMethod, clientSecret);
+            res.status(200).json(checkoutResponse);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
 }
 exports.CheckoutController = CheckoutController;
 //# sourceMappingURL=checkoutController.js.map

@@ -51,6 +51,20 @@ class CloudinaryService {
             throw new Error(`Failed to upload image: ${error.message}`);
         }
     }
+    async uploadSubCategoryImage(filePath) {
+        try {
+            const result = await this.uploader.upload(filePath, {
+                folder: 'SubCategoryImages',
+                resource_type: 'auto', // Automatically detects the file type
+            });
+            // Remove the image from local storage after successful upload
+            await fs_1.promises.unlink(filePath);
+            return result;
+        }
+        catch (error) {
+            throw new Error(`Failed to upload image: ${error.message}`);
+        }
+    }
 }
 exports.default = CloudinaryService;
 //# sourceMappingURL=cloudinary.js.map

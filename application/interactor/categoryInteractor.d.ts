@@ -14,6 +14,9 @@ export declare class CategoryInteractor implements IsubCategoryInteractory {
     getByName(page: number, limit: number, name: string): Promise<LargeDataFetch>;
     getListedCategories(page: number, limit: number): Promise<LargeDataFetch>;
     getCategoryById(id: mongoose.Types.ObjectId): Promise<categoryDTo | null>;
+    availblePrioritySlots(): Promise<{
+        priorities: number[] | [];
+    }>;
     updateCategory(id: mongoose.Types.ObjectId, data: Partial<categoryCreationDTo>): Promise<categoryDTo | responseHandler | null>;
     deleteCategory(id: mongoose.Types.ObjectId): Promise<boolean>;
     listById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;

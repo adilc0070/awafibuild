@@ -48,6 +48,10 @@ const CategorySchema = new mongoose_1.Schema({
     isDeleted: {
         type: Boolean,
         default: false, // Default value is false
+    },
+    priority: {
+        type: Number,
+        default: 101,
     }
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

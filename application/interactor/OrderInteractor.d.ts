@@ -31,5 +31,15 @@ export declare class OrderInteractor implements IOrderInteractor {
     }>;
     getUserOrderById(orderId: string, userId: string): Promise<OrderDTO | null>;
     cancelUserOrder(orderId: string, userId: string, cancellationReason: string): Promise<boolean>;
+    returnUserOrder(orderId: string, userId: string, returnData: {
+        returnReason: string;
+        productId?: string;
+        variantId?: string;
+    }): Promise<any>;
+    actionOnReturnOrder(orderId: string, returnData: {
+        productId?: string;
+        variantId?: string;
+        returnStatus: 'approved' | 'rejected';
+    }): Promise<any>;
     private mapToDTO;
 }

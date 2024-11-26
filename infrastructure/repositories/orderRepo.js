@@ -89,14 +89,19 @@ class OrderRepository extends baseRepository_1.BaseRepository {
     }
     async updateStatus(data) {
         try {
-            //   const orderObjectId = this.validateAndConvertId(data.orderId, 'Order');
-            return await this.model.findByIdAndUpdate(data.orderId, {
-                $set: {
-                    orderStatus: data.orderStatus,
-                    updatedAt: new Date(),
-                    trackingId: data.trackingId
-                }
-            }, { new: true }).exec();
+            // Prepare the update fields
+            const updateFields = {
+                orderStatus: data.orderStatus,
+                updatedAt: new Date(),
+            };
+            // Only include trackingId if it's a non-null and non-empty string
+            if (data.trackingId && typeof data.trackingId === 'string' && data.trackingId.trim().length > 0) {
+                updateFields.trackingId = data.trackingId;
+            }
+            // Update the document
+            return await this.model
+                .findByIdAndUpdate(data.orderId, { $set: updateFields }, { new: true })
+                .exec();
         }
         catch (error) {
             throw new Error(`Error updating order status: ${error instanceof Error ? error.message : String(error)}`);
@@ -182,6 +187,55 @@ class OrderRepository extends baseRepository_1.BaseRepository {
         catch (error) {
             throw new Error(`Error cancelling order: ${error instanceof Error ? error.message : String(error)}`);
         }
+    }
+    async returnOneProduct(orderId, returnData) {
+        const { productId, variantId, returnReason } = returnData;
+        // Update the return status and reason for the specific product variant
+        const result = await this.model.updateOne({ _id: orderId, "items.productId": productId, "items.variantId": variantId, orderStatus: "delivered" }, {
+            $set: {
+                "items.$.returnStatus": "requested",
+                "items.$.returnReason": returnReason,
+                returnRequestedAt: new Date(),
+            },
+        });
+        return result.modifiedCount > 0
+            ? { success: true, message: "Product return requested successfully." }
+            : { success: false, message: "Product or variant not found in the order." };
+    }
+    async returnTheOrder(orderId, returnReason) {
+        const result = await this.model.updateOne({ _id: orderId, orderStatus: "delivered" }, {
+            $set: {
+                returnRequestedAt: new Date(),
+                returnStatus: "requested",
+                returnReason: returnReason
+            },
+        });
+        return result.modifiedCount > 0
+            ? { success: true, message: "Order return requested successfully." }
+            : { success: false, message: "Order not found " };
+    }
+    async actionOnReturnOneProduct(orderId, data) {
+        const { returnStatus, refundAmount, productId, variantId } = data;
+        const result = await this.model.updateOne({
+            _id: orderId,
+            orderStatus: "delivered",
+            "items.productId": productId,
+            "items.variantId": variantId, // Match the specific product and variant
+        }, {
+            $set: {
+                "items.$.returnStatus": returnStatus,
+                "items.$.refundAmount": refundAmount,
+            },
+            $inc: {
+                amount: -refundAmount, // Subtract refundAmount from the total amount
+            },
+        });
+        return result;
+    }
+    async returnOrder(orderId, returnStatus) {
+        const result = await this.model.updateOne({ _id: orderId, orderStatus: "delivered" }, { $set: {
+                returnStatus: returnStatus
+            } });
     }
 }
 exports.OrderRepository = OrderRepository;

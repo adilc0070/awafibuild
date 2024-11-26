@@ -32,6 +32,16 @@ class DashboardController {
             next(error);
         }
     }
+    async topSellings(req, res, next) {
+        try {
+            const result = await this.dashboardInteractor.topSellings();
+            return res.json(result);
+        }
+        catch (error) {
+            console.log(error);
+            next(error);
+        }
+    }
     async salesReport(req, res, next) {
         try {
             const reportType = req.query.reportType;

@@ -12,4 +12,7 @@ export default interface ICategoryInteractor {
     deleteCategory(id: mongoose.Types.ObjectId): Promise<boolean>;
     listById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
     unListById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
+    availblePrioritySlots(): Promise<{
+        priorities: number[] | [];
+    }>;
 }

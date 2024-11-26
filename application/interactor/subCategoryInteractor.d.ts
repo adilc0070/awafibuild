@@ -3,9 +3,11 @@ import IsubCategoryRepo from "../../interface/subCategoryInterface/IsubCategoryR
 import { subCategoryCreationDTo, subCategoryDTo } from '../../domain/dtos/SubCategoryDTO';
 import IsubCategoryInteractor from "../../interface/subCategoryInterface/IsubCategoryInteractory";
 import mongoose from "mongoose";
+import { ICloudinaryService } from "../../interface/serviceInterface/IcloudinaryInterface";
 export declare class SubCategoryInteractor implements IsubCategoryInteractor {
     private categoryRepo;
-    constructor(categoryRepo: IsubCategoryRepo);
+    private cloudService;
+    constructor(categoryRepo: IsubCategoryRepo, cloudService: ICloudinaryService);
     addCategory(data: subCategoryCreationDTo): Promise<subCategoryDTo | responseHandler>;
     getAllCategories(page: number, limit: number): Promise<LargeDataFetch>;
     searchByname(page: number, limit: number, name: string): Promise<LargeDataFetch>;
@@ -15,5 +17,8 @@ export declare class SubCategoryInteractor implements IsubCategoryInteractor {
     deleteCategory(id: mongoose.Types.ObjectId): Promise<boolean>;
     listById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
     unListById(id: mongoose.Types.ObjectId): Promise<responseHandler | null>;
+    availblePrioritySlots(): Promise<{
+        priorities: number[] | [];
+    }>;
     private mapToDTO;
 }

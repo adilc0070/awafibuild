@@ -46,10 +46,28 @@ class CategoryInteractor {
             throw new Error('Failed to fetch listed categories');
         }
     }
-    // Get a category by ID
     async getCategoryById(id) {
-        const category = await this.categoryRepo.getCategoryById(id); // Use repository method
-        return category && !category.isDeleted ? this.mapToDTO(category) : null;
+        // Fetch category by ID
+        const category = await this.categoryRepo.getCategoryById(id);
+        // If the category doesn't exist or is deleted, return null
+        if (!category) {
+            return null;
+        }
+        // Return the mapped category data along with priorities
+        return category ? this.mapToDTO(category) : null;
+    } // Assuming `mapToDTO` maps the category to a suitable format
+    async availblePrioritySlots() {
+        const maxPriorities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        // Fetch all listed categories
+        const categoriesResponse = await this.categoryRepo.getListedCategories(0, 0);
+        // Extract existing priorities
+        const existingPriorities = categoriesResponse.data
+            .map((ele) => ele.priority)
+            .filter((priority) => typeof priority === "number" && priority != 101); // Filter out invalid values
+        // Find missing priorities
+        const missingPriorities = maxPriorities.filter((priority) => !existingPriorities.includes(priority));
+        // Return the mapped category data along with priorities
+        return { priorities: missingPriorities };
     }
     // Update a category
     async updateCategory(id, data) {
@@ -108,6 +126,7 @@ class CategoryInteractor {
             isDeleted: category.isDeleted,
             createdAt: category.createdAt,
             updatedAt: category.updatedAt,
+            priority: category.priority
         };
     }
 }

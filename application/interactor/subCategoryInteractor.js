@@ -3,8 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubCategoryInteractor = void 0;
 class SubCategoryInteractor {
     categoryRepo; // Use the category repository
-    constructor(categoryRepo) {
+    cloudService;
+    constructor(categoryRepo, cloudService) {
         this.categoryRepo = categoryRepo;
+        this.cloudService = cloudService;
     }
     // Add a new category
     async addCategory(data) {
@@ -13,6 +15,10 @@ class SubCategoryInteractor {
         const isAvailable = await this.categoryRepo.findByName(name);
         if (isAvailable) {
             return { message: "Category always in your bucket", status: 409 };
+        }
+        if (data && data.photo) {
+            const uploadImage = await this.cloudService.uploadSubCategoryImage(data.photo);
+            data.photo = uploadImage.secure_url;
         }
         const category = await this.categoryRepo.addCategory(data); // Use repository method
         return this.mapToDTO(category);
@@ -47,6 +53,10 @@ class SubCategoryInteractor {
                 return { message: "Category always in your bucket", status: 409 };
             }
         }
+        if (data.photo) {
+            const uploadImage = await this.cloudService.uploadSubCategoryImage(data.photo);
+            data.photo = uploadImage.secure_url;
+        }
         const updatedCategory = await this.categoryRepo.updateCategory(categoryId, data); // Use repository method
         return updatedCategory && !updatedCategory.isDeleted ? this.mapToDTO(updatedCategory) : null;
     }
@@ -62,7 +72,7 @@ class SubCategoryInteractor {
                 throw new Error("Category is already listed.");
             }
             category.isListed = true; // List the category
-            await this.categoryRepo.updateCategory(id, category); // Use repository method to update
+            await this.categoryRepo.updateCategory(id, this.mapToDTO(category)); // Use repository method to update
             return { message: "Category listed successfully" };
         }
         throw new Error("Category not found.");
@@ -75,15 +85,28 @@ class SubCategoryInteractor {
                 throw new Error("Category is already unlisted.");
             }
             category.isListed = false; // Unlist the category
-            await this.categoryRepo.updateCategory(id, category); // Use repository method to update
+            await this.categoryRepo.updateCategory(id, this.mapToDTO(category)); // Use repository method to update
             return { message: "Category unlisted successfully" };
         }
         throw new Error("Category not found.");
     }
+    async availblePrioritySlots() {
+        const maxPriorities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        // Fetch all listed categories
+        const categoriesResponse = await this.categoryRepo.getAllCategories(0, 0);
+        // Extract existing priorities
+        const existingPriorities = categoriesResponse.data
+            .map((ele) => ele.priority)
+            .filter((priority) => typeof priority === "number" && priority != 101); // Filter out invalid values
+        // Find missing priorities
+        const missingPriorities = maxPriorities.filter((priority) => !existingPriorities.includes(priority));
+        // Return the mapped category data along with priorities
+        return { priorities: missingPriorities };
+    }
     // Map Category to ProductDTO
     mapToDTO(category) {
         return {
-            _id: category._id.toString(),
+            _id: category._id,
             name: category.name,
             description: category.description,
             mainCategory: category.mainCategory,
@@ -91,6 +114,8 @@ class SubCategoryInteractor {
             isDeleted: category.isDeleted,
             createdAt: category.createdAt,
             updatedAt: category.updatedAt,
+            photo: category.photo,
+            priority: category.priority
         };
     }
 }

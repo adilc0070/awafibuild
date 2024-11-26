@@ -11,4 +11,5 @@ export declare class CategoryController {
     updateCategory(req: Request, res: Response, next: NextFunction): Promise<void>;
     toggleListStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     deleteCategory(req: Request, res: Response, next: NextFunction): Promise<void>;
+    availablePrioritySlots(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

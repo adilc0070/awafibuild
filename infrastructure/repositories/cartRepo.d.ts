@@ -1,4 +1,4 @@
-import { CartDTO } from "../../domain/dtos/CartDTO";
+import { CartDTO, IProductDetails } from "../../domain/dtos/CartDTO";
 import { Model } from "mongoose";
 import { IUserCart } from "../../domain/entities/userCartSchema";
 import { BaseRepository } from "./baseRepository";
@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 export declare class CartRepository extends BaseRepository<IUserCart> implements ICartRepo {
     constructor(model: Model<IUserCart>);
     createCart(data: CartDTO): Promise<IUserCart>;
-    findCartByUser(userId: string): Promise<IUserCart | null>;
+    findCartByUser(userId: string): Promise<IProductDetails[] | null>;
     checkProductAvailability(productId: string, variantId: string, quantity: number): Promise<boolean>;
     addItemToCart(userId: string, productId: string, variantId: string, quantity: number): Promise<IUserCart | null>;
     updateItemQuantity(userId: string, productId: string, variantId: string, quantity: number): Promise<IUserCart | null>;

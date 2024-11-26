@@ -28,10 +28,17 @@ const mongoose_1 = __importStar(require("mongoose"));
 const reviewSchema = new mongoose_1.Schema({
     user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User", required: true },
     product: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product", required: true },
+    order: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Order", required: true }, // New field added
     rating: { type: Number, required: true, min: 1, max: 5 },
-    comment: { type: String, default: "" }
+    comment: { type: String, default: "" },
+    status: {
+        type: String,
+        enum: ["pending", "approved", "declined"],
+        default: "pending",
+    },
 }, {
     timestamps: true
 });
+reviewSchema.index({ user: 1, product: 1, order: 1 }, { unique: true });
 exports.ReviewModel = mongoose_1.default.model("Review", reviewSchema);
 //# sourceMappingURL=reviewModel.js.map

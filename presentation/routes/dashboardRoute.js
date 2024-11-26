@@ -15,5 +15,6 @@ const dashboardController = new dashboardController_1.default(dashboardInteracto
 dashboardRoute.get('/orders', dashboardController.dashTotalOrders.bind(dashboardController));
 dashboardRoute.get('/revenue', dashboardController.dashTotalRevenue.bind(dashboardController));
 dashboardRoute.get('/sales-report', dashboardController.salesReport.bind(dashboardController));
+dashboardRoute.get('/top-Selling', dashboardController.topSellings.bind(dashboardController));
 exports.default = dashboardRoute;
 //# sourceMappingURL=dashboardRoute.js.map

@@ -13,7 +13,7 @@ class SubCategoryRepository extends baseRepository_1.BaseRepository {
     async getAllCategories(page, limit) {
         const skip = (page - 1) * limit;
         const totalCategories = await this.model.countDocuments();
-        const category = await this.model.find().skip(skip).limit(limit);
+        const category = await this.model.find().sort({ priority: 1 }).skip(skip).limit(limit);
         return {
             data: category,
             totalPages: Math.ceil(totalCategories / limit)
@@ -40,7 +40,7 @@ class SubCategoryRepository extends baseRepository_1.BaseRepository {
     async getListedCategories(mainCategoryId, page, limit) {
         const skip = (page - 1) * limit;
         const totalCategories = await this.model.countDocuments({ isListed: true, isDeleted: false, mainCategory: mainCategoryId });
-        const category = await this.model.find({ isListed: true, isDeleted: false, mainCategory: mainCategoryId }).skip(skip).limit(limit);
+        const category = await this.model.find({ isListed: true, isDeleted: false, mainCategory: mainCategoryId }).sort({ priority: 1 }).skip(skip).limit(limit);
         return {
             data: category,
             totalPages: Math.ceil(totalCategories / limit)
